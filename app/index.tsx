@@ -1,123 +1,21 @@
-import { Button, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import "@fontsource/league-spartan";
+import { router, useRouter } from "expo-router";
 import { supabase } from "../lib/supabase";
-import GoogleAuth from "../components/GoogleAuth";
+import { Button, Text } from "react-native";
 
 export default function Page() {
 
 
-    const GoogleLogin = () => {
-        supabase.auth.signInWithOAuth({
-            provider: 'google',
-        })
-    }
-  return (
-    <View>
-      <Image style={styles.ImageStyle} source={require("./test.webp")} />
-      <View style={styles.welcome}>
-        <Text style={styles.WelcomeText}>Welcome To Culture & Bites</Text>
-        <Text style={styles.WelcomeTextUnder}>
-          Ulogujte se ili kreirajte novi nalog
-        </Text>
-      </View>
-      <View>
-        <GoogleAuth/>
-      </View>
-      <View style={styles.inputSection}>
-        <Text style={styles.inputLabel}>Email</Text>
-        <TextInput
-          style={styles.input}
-        />
-        <Text style={styles.inputLabel}>Password</Text>
-        <TextInput
-          style={styles.input}
-        />
-      </View>
-      <View style={styles.buttons}>
-        <TouchableOpacity>
-            <View style={styles.button1}>
-                <Text style={styles.button1Color}>Sign Up</Text>
-            </View>
-        </TouchableOpacity>
-        <TouchableOpacity>
-            <View style={styles.button2}>
-                <Text style={styles.button2Color}>Sign Up</Text>
-            </View>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-}
+    const router = useRouter();
 
-const styles = StyleSheet.create({
-  welcome: {
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  ImageStyle: {
-    width: "100%",
-    height: "40%",
-  },
-  WelcomeText: {
-    fontWeight: "bold",
-    color: "#2A3663",
-    fontSize: 25,
-  },
-  WelcomeTextUnder: {
-    fontWeight: "bold",
-    fontSize: 18,
-    color: "#B59F78",
-  },
-  inputLabel: {
-    fontSize: 20
-  },
-  inputSection: {
-    fontSize: 30,
-    padding: 25,
-  },
-  input: {
-    padding: 10,
-    marginTop: 5,
-    marginBottom: 10,
-    height: 45,
-    backgroundColor: "#B59F78",
-    borderRadius: 10,
-  },
-  buttons: {
-    shadowColor: "0",
-    paddingLeft: 25,
-    paddingRight: 25,
-  },
-  button1: {
-    color: "white",
-    backgroundColor: "#2A3663",
-    justifyContent: "center",
-    alignItems: "center",
-    height: 45,
-    borderRadius: 10,
-  },
-  button2: {
-    marginTop: 10,
-    color: "white",
-    backgroundColor: "#D8DBBD",
-    justifyContent: "center",
-    alignItems: "center",
-    height: 45,
-    borderRadius: 10,
-  },
-  button1Color: {
-    color: "white",
-    fontSize: 20,
-  },
-  button2Color: {
-    color: "#2A3663",
-    fontSize: 20,
-  },
-  googleAuth: {
-    height:45,
-    backgroundColor: "#444",
-    color: "white"
-  }
-});
+    async function signOut() {
+        const { error } = await supabase.auth.signOut();
+        router.replace('/signin');
+      }
+
+    return (
+        <>
+        <Text>Dajgi</Text>
+        <Button title="Log Out" color="#444" onPress={signOut}/>
+        </>
+    )
+}

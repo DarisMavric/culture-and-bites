@@ -1,37 +1,56 @@
-import { supabase } from '../lib/supabase';
-import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google';
-import { useEffect } from 'react';
-import { Button } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { Image, Text, View, TouchableOpacity } from 'react-native';
 
-WebBrowser.maybeCompleteAuthSession();
+import * as Google from 'expo-auth-session/providers/google'
+import * as AuthSession from 'expo-auth-session';
 
-export default function LoginScreen() {
+// Please refer Section 2 below for obtaining Credentials
+const GOOGLE_ANDROID_CLIENT_ID = "422876512797-iilsd83p7i8btfnqh75q6kmdri4dg0pj.apps.googleusercontent.com"
+const GOOGLE_iOS_CLIENT_ID = "422876512797-iilsd83p7i8btfnqh75q6kmdri4dg0pj.apps.googleusercontent.com"
+
+export default function GoogleAuth() {
+
+    const [userInfo, setUserInfo] = useState('')
+
+    /******************** Google SignIn *********************/
     const [request, response, promptAsync] = Google.useAuthRequest({
-        clientId: '422876512797-iilsd83p7i8btfnqh75q6kmdri4dg0pj.apps.googleusercontent.com',
-        redirectUri: 'https://ildnbdoakruawnyximlx.supabase.co/auth/v1/callback',
-        scopes: ['profile', 'email'],
-    });
+        androidClientId: "422876512797-iilsd83p7i8btfnqh75q6kmdri4dg0pj.apps.googleusercontent.com",
+        iosClientId: "422876512797-iilsd83p7i8btfnqh75q6kmdri4dg0pj.apps.googleusercontent.com"
+    })
 
     useEffect(() => {
-        if (response?.type === 'success') {
-            const { id_token } = response.params;
-            signInWithGoogle(id_token);
+        handleSignInWithGoogle();
+    }, [response])
+
+    const handleSignInWithGoogle = async () => {
+        if (response?.type === "success") {
+            await getUserInfo(response.authentication.accessToken);
         }
-    }, [response]);
+    }
 
-    const signInWithGoogle = async (idToken) => {
-        const { data, error } = await supabase.auth.signInWithIdToken({
-            provider: 'google',
-            token: idToken,
-        });
+    const getUserInfo = async (token) => {
+        try {
+            const response = await fetch("https://www.googleapis.com/userinfo/v2/me", {
+                headers: { Authorization: `Bearer ${token}` }
+            })
 
-        if (error) {
-            console.error('Login error:', error);
-        } else {
-            console.log('User:', data);
+            const user = await response.json();
+
+            console.log(user)
+            setUserInfo(user)
+        } catch (e) {
+            console.log(e)
         }
-    };
+    }
 
-    return <Button title="Login with Google" onPress={() => promptAsync()} />;
+    return (
+
+        <>
+          {/* Google */}
+            <TouchableOpacity onPress={() => { promptAsync() }} activeOpacity={0.7}>
+              <Text style={{ width: '10%', height: '10%', borderRadius: 25 }}>Sign in With Google</Text>
+            </TouchableOpacity>
+        </>
+
+    );
 }

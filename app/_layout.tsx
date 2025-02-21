@@ -1,24 +1,37 @@
-import { SafeAreaView, StyleSheet, Text } from "react-native"
-import { Slot } from "expo-router"
-import "@fontsource/league-spartan";
-
+import { useEffect, useState } from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
+import { Slot, useRouter } from "expo-router";
+import { supabase } from "../lib/supabase"; // Adjust path as needed
 
 const RootLayout = () => {
-    return (
-        <SafeAreaView style={styles.container}>
-            <Slot/>
-        </SafeAreaView>
-    )
-}
+  const [user, setUser] = useState(null);
+  const router = useRouter();
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      
+      if (!user) {
+        router.push("/signin");
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Slot />
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: "column",
-        backgroundColor: "#FAF6E3",
-        fontFamily: "League Spartan",
-    },
-})
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+});
 
 export default RootLayout;
