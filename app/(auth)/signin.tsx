@@ -1,28 +1,36 @@
-import { Alert, Button, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Button,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "@fontsource/league-spartan";
 import { supabase } from "../../lib/supabase";
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import { Link, useNavigation, useRouter } from "expo-router";
 
-
 export default function SignIn() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
   async function signInWithEmail() {
-    setLoading(true)
+    setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
-    })
+    });
 
-    if (error) Alert.alert(error.message)
-    setLoading(false)
-    router.replace('/');
+    if (error) Alert.alert(error.message);
+    setLoading(false);
+    router.push("/");
   }
 
   return (
@@ -41,7 +49,7 @@ export default function SignIn() {
           value={email}
           onChangeText={(text) => setEmail(text)}
           placeholder="Email"
-          placeholderTextColor="#D8DBBD" 
+          placeholderTextColor="#D8DBBD"
         />
         <Text style={styles.inputLabel}>Password</Text>
         <TextInput
@@ -49,17 +57,32 @@ export default function SignIn() {
           onChangeText={(text) => setPassword(text)}
           value={password}
           placeholder="Password"
-          placeholderTextColor="#D8DBBD" 
+          placeholderTextColor="#D8DBBD"
         />
       </View>
       <View style={styles.buttons}>
         <TouchableOpacity>
-            <View style={styles.button1}>
-                <Text style={styles.button1Color} disabled={loading} onPress={() => signInWithEmail()}>Sign In</Text>
-            </View>
+          <View style={styles.button1}>
+            <Text
+              style={styles.button1Color}
+              disabled={loading}
+              onPress={() => signInWithEmail()}
+            >
+              Sign In
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
-      <Text style={{color: "#B59F78", marginTop: 5, paddingRight: 25, fontSize: 15, textAlign: "right", fontWeight: "bold"}}>
+      <Text
+        style={{
+          color: "#B59F78",
+          marginTop: 5,
+          paddingRight: 25,
+          fontSize: 15,
+          textAlign: "right",
+          fontWeight: "bold",
+        }}
+      >
         <Link href="/signup">Create New Account</Link>
       </Text>
     </View>
@@ -87,7 +110,7 @@ const styles = StyleSheet.create({
     color: "#B59F78",
   },
   inputLabel: {
-    fontSize: 20
+    fontSize: 18,
   },
   inputSection: {
     fontSize: 30,
@@ -99,6 +122,7 @@ const styles = StyleSheet.create({
     height: 45,
     backgroundColor: "#B59F78",
     borderRadius: 10,
+    color: "#D8DBBD"
   },
   buttons: {
     shadowColor: "0",
@@ -118,8 +142,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   googleAuth: {
-    height:45,
+    height: 45,
     backgroundColor: "#444",
-    color: "white"
-  }
+    color: "white",
+  },
 });
