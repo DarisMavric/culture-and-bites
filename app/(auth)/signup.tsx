@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import "@fontsource/league-spartan";
 import { supabase } from "../../lib/supabase";
 import React, { useState } from 'react'
+import { Link } from "expo-router";
 
 
 export default function SignIn() {
@@ -65,15 +66,11 @@ export default function SignIn() {
           value={password}
         />
       </View>
+      <Text><Link href="/signin">Already Have An Account</Link></Text>
       <View style={styles.buttons}>
         <TouchableOpacity>
             <View style={styles.button1}>
-                <Text style={styles.button1Color} disabled={loading} onPress={() => signInWithEmail()}>Sign Up</Text>
-            </View>
-        </TouchableOpacity>
-        <TouchableOpacity>
-            <View style={styles.button2}>
-                <Text style={styles.button2Color} disabled={loading} onPress={() => signUpWithEmail()}>Sign Up</Text>
+                <Text style={styles.button1Color} disabled={loading} onPress={() => signUpWithEmail()}>Sign Up</Text>
             </View>
         </TouchableOpacity>
       </View>
@@ -111,7 +108,6 @@ const styles = StyleSheet.create({
   input: {
     padding: 10,
     marginTop: 5,
-    marginBottom: 10,
     height: 45,
     backgroundColor: "#B59F78",
     borderRadius: 10,
@@ -129,21 +125,8 @@ const styles = StyleSheet.create({
     height: 45,
     borderRadius: 10,
   },
-  button2: {
-    marginTop: 10,
-    color: "white",
-    backgroundColor: "#D8DBBD",
-    justifyContent: "center",
-    alignItems: "center",
-    height: 45,
-    borderRadius: 10,
-  },
   button1Color: {
     color: "white",
-    fontSize: 20,
-  },
-  button2Color: {
-    color: "#2A3663",
     fontSize: 20,
   },
   googleAuth: {

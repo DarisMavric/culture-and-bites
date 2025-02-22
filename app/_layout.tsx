@@ -14,6 +14,8 @@ const RootLayout = () => {
       
       if (!user) {
         router.push("/signin");
+      } else {
+        router.replace('/');
       }
     };
 

@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import "@fontsource/league-spartan";
 import { supabase } from "../../lib/supabase";
 import React, { useState } from 'react'
-import { useNavigation, useRouter } from "expo-router";
+import { Link, useNavigation, useRouter } from "expo-router";
 
 
 export default function SignIn() {
@@ -25,21 +25,6 @@ export default function SignIn() {
     router.replace('/');
   }
 
-  async function signUpWithEmail() {
-    setLoading(true)
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    })
-
-    if (error) Alert.alert(error.message)
-    if (!session) Alert.alert('Please check your inbox for email verification!')
-    setLoading(false)
-  }
-
   return (
     <View>
       <Image style={styles.ImageStyle} source={require("./test.webp")} />
@@ -55,26 +40,28 @@ export default function SignIn() {
           style={styles.input}
           value={email}
           onChangeText={(text) => setEmail(text)}
+          placeholder="Email"
+          placeholderTextColor="#D8DBBD" 
         />
         <Text style={styles.inputLabel}>Password</Text>
         <TextInput
           style={styles.input}
           onChangeText={(text) => setPassword(text)}
           value={password}
+          placeholder="Password"
+          placeholderTextColor="#D8DBBD" 
         />
       </View>
       <View style={styles.buttons}>
         <TouchableOpacity>
             <View style={styles.button1}>
-                <Text style={styles.button1Color} disabled={loading} onPress={() => signInWithEmail()}>Sign Up</Text>
-            </View>
-        </TouchableOpacity>
-        <TouchableOpacity>
-            <View style={styles.button2}>
-                <Text style={styles.button2Color} disabled={loading} onPress={() => signUpWithEmail()}>Sign Up</Text>
+                <Text style={styles.button1Color} disabled={loading} onPress={() => signInWithEmail()}>Sign In</Text>
             </View>
         </TouchableOpacity>
       </View>
+      <Text style={{color: "#B59F78", marginTop: 5, paddingRight: 25, fontSize: 15, textAlign: "right", fontWeight: "bold"}}>
+        <Link href="/signup">Create New Account</Link>
+      </Text>
     </View>
   );
 }
@@ -100,11 +87,12 @@ const styles = StyleSheet.create({
     color: "#B59F78",
   },
   inputLabel: {
-    fontSize: 20
+    fontSize: 18
   },
   inputSection: {
     fontSize: 30,
-    padding: 25,
+    paddingLeft: 25,
+    paddingRight: 25,
   },
   input: {
     padding: 10,
@@ -113,6 +101,7 @@ const styles = StyleSheet.create({
     height: 45,
     backgroundColor: "#B59F78",
     borderRadius: 10,
+    color: "#D8DBBD"
   },
   buttons: {
     shadowColor: "0",
