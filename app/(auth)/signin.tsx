@@ -87,21 +87,18 @@ const styles = StyleSheet.create({
     color: "#B59F78",
   },
   inputLabel: {
-    fontSize: 18
+    fontSize: 20
   },
   inputSection: {
     fontSize: 30,
-    paddingLeft: 25,
-    paddingRight: 25,
+    padding: 25,
   },
   input: {
     padding: 10,
     marginTop: 5,
-    marginBottom: 10,
     height: 45,
     backgroundColor: "#B59F78",
     borderRadius: 10,
-    color: "#D8DBBD"
   },
   buttons: {
     shadowColor: "0",
@@ -116,21 +113,8 @@ const styles = StyleSheet.create({
     height: 45,
     borderRadius: 10,
   },
-  button2: {
-    marginTop: 10,
-    color: "white",
-    backgroundColor: "#D8DBBD",
-    justifyContent: "center",
-    alignItems: "center",
-    height: 45,
-    borderRadius: 10,
-  },
   button1Color: {
     color: "white",
-    fontSize: 20,
-  },
-  button2Color: {
-    color: "#2A3663",
     fontSize: 20,
   },
   googleAuth: {

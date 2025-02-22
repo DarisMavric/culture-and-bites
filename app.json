@@ -2,7 +2,6 @@
   "expo": {
     "name": "culture-and-bites",
     "slug": "culture-and-bites",
-    "schema": "culture-and-bites",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -31,6 +30,11 @@
       [
         "@react-native-google-signin/google-signin"
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d87d3c7e-1de3-4be1-9bbf-9cf7ae5cc09e"
+      }
+    }
   }
 }

@@ -9,18 +9,8 @@ import { Link } from "expo-router";
 export default function SignIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
-
-  async function signInWithEmail() {
-    setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    })
-
-    if (error) Alert.alert(error.message)
-    setLoading(false)
-  }
 
   async function signUpWithEmail() {
     setLoading(true)
@@ -28,12 +18,17 @@ export default function SignIn() {
       data: { session },
       error,
     } = await supabase.auth.signUp({
-      email: email,
-      password: password,
+      email,
+      password,
+      options: {
+        data: {
+          name
+        },
+      },
     })
 
-    if (error) Alert.alert(error.message)
-    if (!session) Alert.alert('Please check your inbox for email verification!')
+    console.log('session: ', session);
+    console.log('error: ', error);
     setLoading(false)
   }
 
@@ -47,23 +42,29 @@ export default function SignIn() {
         </Text>
       </View>
       <View style={styles.inputSection}>
-        <Text style={styles.inputLabel}>Email</Text>
+        <Text style={styles.inputLabel}>Name:</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => setName(text)}
+          value={name}
+          placeholder="Enter Your Name"
+          placeholderTextColor="#D8DBBD" 
+        />
+        <Text style={styles.inputLabel}>Email:</Text>
         <TextInput
           style={styles.input}
           value={email}
           onChangeText={(text) => setEmail(text)}
+          placeholder="Email"
+          placeholderTextColor="#D8DBBD" 
         />
-        <Text style={styles.inputLabel}>Password</Text>
+        <Text style={styles.inputLabel}>Password:</Text>
         <TextInput
           style={styles.input}
           onChangeText={(text) => setPassword(text)}
           value={password}
-        />
-        <Text style={styles.inputLabel}>First Name</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => setPassword(text)}
-          value={password}
+          placeholder="Password"
+          placeholderTextColor="#D8DBBD" 
         />
       </View>
       <Text><Link href="/signin">Already Have An Account</Link></Text>
