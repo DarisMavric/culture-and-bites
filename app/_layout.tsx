@@ -2,24 +2,34 @@ import { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { Slot, useRouter } from "expo-router";
 import { supabase } from "../lib/supabase"; // Adjust path as needed
+import { AuthProvider, useAuth } from "../context/AuthContext";
+
+
+const _layout = () => {
+
+  return (
+    <AuthProvider>
+      <RootLayout />
+    </AuthProvider>
+  );
+};
 
 const RootLayout = () => {
-  const [user, setUser] = useState(null);
   const router = useRouter();
+  const {setAuth} = useAuth();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-      
-      if (!user) {
-        router.push("/signin");
-      } else {
-        router.replace('/');
-      }
-    };
+    supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('session user: ', session?.user?.id);
 
-    fetchUser();
+      if (session) {
+        setAuth(session?.user);
+        router.replace('/');
+      } else {
+        setAuth(null);
+        router.replace('/signin');
+      }
+    });
   }, []);
 
   return (
@@ -36,4 +46,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RootLayout;
+export default _layout;

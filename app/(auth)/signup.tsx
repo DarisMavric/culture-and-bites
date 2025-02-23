@@ -22,7 +22,8 @@ export default function SignIn() {
       password,
       options: {
         data: {
-          name
+          name,
+          email
         },
       },
     })

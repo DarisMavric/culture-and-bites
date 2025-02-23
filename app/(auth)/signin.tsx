@@ -30,11 +30,11 @@ export default function SignIn() {
 
     if (error) Alert.alert(error.message);
     setLoading(false);
-    router.push("/");
+    router.replace("/");
   }
 
   return (
-    <View>
+    <SafeAreaView>
       <Image style={styles.ImageStyle} source={require("./test.webp")} />
       <View style={styles.welcome}>
         <Text style={styles.WelcomeText}>Welcome To Culture & Bites</Text>
@@ -85,7 +85,7 @@ export default function SignIn() {
       >
         <Link href="/signup">Create New Account</Link>
       </Text>
-    </View>
+    </SafeAreaView>
   );
 }
 
