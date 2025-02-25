@@ -30,7 +30,7 @@ export default function SignIn() {
 
     if (error) Alert.alert(error.message);
     setLoading(false);
-    router.replace("/");
+    router.replace("/home");
   }
 
   return (

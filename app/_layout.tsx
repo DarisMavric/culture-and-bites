@@ -24,7 +24,7 @@ const RootLayout = () => {
 
       if (session) {
         setAuth(session?.user);
-        router.replace('/');
+        router.replace('/home');
       } else {
         setAuth(null);
         router.replace('/signin');
