@@ -34,6 +34,24 @@ const _layout = () => {
           ),
         }}
       />
+      <Tabs.Screen
+        name="myTrips"
+        options={{
+          title: "My Trips",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" color="#B59F78" size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="account"
+        options={{
+          title: "account",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" color="#B59F78" size={size} />
+          ),
+        }}
+      />
     </Tabs>
   </>
   );
