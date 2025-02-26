@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import "@fontsource/league-spartan";
 import { supabase } from "../../lib/supabase";
 import React, { useState } from 'react'
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 
 
 export default function SignIn() {
@@ -11,6 +11,9 @@ export default function SignIn() {
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
+
+
+  const router = useRouter();
 
   async function signUpWithEmail() {
     setLoading(true)
@@ -28,8 +31,11 @@ export default function SignIn() {
       },
     })
 
-    console.log('session: ', session);
-    console.log('error: ', error);
+    if(session){
+      router.push('/home');
+    }
+
+    if(error) Alert.alert(error.message)
     setLoading(false)
   }
 

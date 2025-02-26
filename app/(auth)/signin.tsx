@@ -22,15 +22,19 @@ export default function SignIn() {
   const router = useRouter();
 
   async function signInWithEmail() {
-    console.log("pritisnuto");
-    const { error } = await supabase.auth.signInWithPassword({
+    setLoading(true);
+    const { error, data: {session} } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
 
+
+    if(session) {
+      router.push('/home');
+    }
+
     if (error) Alert.alert(error.message);
-    console.log(error);
-    router.replace("/home");
+    setLoading(false);
   }
 
   return (

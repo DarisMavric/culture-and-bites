@@ -11,9 +11,15 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Page() {
   const router = useRouter();
+
+  const {user,setAuth} = useAuth();
+  
+  
+  console.log('user: ', user);
 
   // Funckija za odjavu
   async function signOut() {
