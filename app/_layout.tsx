@@ -27,7 +27,7 @@ const RootLayout = () => {
         router.replace('/home');
       } else {
         setAuth(null);
-        router.replace('/signin');
+        router.replace('/signup');
       }
     });
   }, []);
