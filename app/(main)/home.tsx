@@ -24,7 +24,6 @@ export default function Page() {
   console.log(session);
   
 
-
   // Funckija za odjavu
   async function signOut() {
     const { error } = await supabase.auth.signOut();
@@ -59,56 +58,60 @@ export default function Page() {
           <Button title="Log Out" onPress={signOut} />
         </View>
 
-        <View style={styles.searchContainer}>
-          <TextInput
-            placeholder="Istraži Destinacije..."
-            style={styles.searchInput}
-            placeholderTextColor="#444"
-          />
-        </View>
+      <View style={styles.searchContainer}>
+        <TextInput
+          placeholder="Istraži Destinacije..."
+          style={styles.searchInput}
+          placeholderTextColor="#444"
+        />
+      </View>
 
-        <Text style={styles.sectionTitle}>Preporučeno</Text>
+      <Text style={styles.sectionTitle}>Preporučeno</Text>
 
-        <View style={styles.recommendedCard}>
-          <Image
-            source={{
-              uri: "https://s3-alpha-sig.figma.com/img/4921/b274/f484dbd21c977ec1f30bb12b6dbf30bf?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=CmEl-pdbZor0K3C-Bd4ju9FxLIgJPMTaM4fhFs1~5r-PZvcCa12kX9qTmTLv~MqRHeiAbGgtMNpn9L-RAnfF976BZKPFjjWxVYsv1Jx0zAW6yNiT7xKsThECdihsNf4Dz7vrkGpc~wlMBPx0Lx6J-TeI5BDKPzNBc4Zmq0hpcpttZ73KibGkuwDAu2kLcT6pN64y5Um0ceX4FiKu7FjkMiqkET1hCd5xQDHzpywINIaFcxZc1VwiXGgGnJPZGBDMIGMbH9bN7RS2CfXLzSIW~5ywb3uavjerbCpAS0n1Hwqhhaw4OHN2SPXWYF7f7MddziGFCx~mI0P3OwNoTfYBAw__",
-            }}
-            style={styles.recommendedImage}
-          />
-          <View style={styles.recommendedContent}>
-            <View style={styles.tagsRow}>
-              <Text style={styles.cityTitle}>Paris</Text>
-              <Text style={styles.tag}>Food</Text>
-              <Text style={styles.tag}>Culture & Museums</Text>
-              <Text style={styles.tag}>Family Trip</Text>
-            </View>
-            <View style={styles.descriptionView}>
-              <Text style={styles.description}>
-                Paris, Francuska – svetski centar umetnosti, mode i kulture.
-              </Text>
-              <TouchableOpacity style={styles.exploreButton}>
-                <Text style={styles.exploreButtonText}>EXPLORE</Text>
-              </TouchableOpacity>
-            </View>
+      <View style={styles.recommendedCard}>
+        <Image
+          source={{
+            uri: "https://s3-alpha-sig.figma.com/img/4921/b274/f484dbd21c977ec1f30bb12b6dbf30bf?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=CmEl-pdbZor0K3C-Bd4ju9FxLIgJPMTaM4fhFs1~5r-PZvcCa12kX9qTmTLv~MqRHeiAbGgtMNpn9L-RAnfF976BZKPFjjWxVYsv1Jx0zAW6yNiT7xKsThECdihsNf4Dz7vrkGpc~wlMBPx0Lx6J-TeI5BDKPzNBc4Zmq0hpcpttZ73KibGkuwDAu2kLcT6pN64y5Um0ceX4FiKu7FjkMiqkET1hCd5xQDHzpywINIaFcxZc1VwiXGgGnJPZGBDMIGMbH9bN7RS2CfXLzSIW~5ywb3uavjerbCpAS0n1Hwqhhaw4OHN2SPXWYF7f7MddziGFCx~mI0P3OwNoTfYBAw__",
+          }}
+          style={styles.recommendedImage}
+        />
+        <View style={styles.recommendedContent}>
+          <View style={styles.tagsRow}>
+            <Text style={styles.cityTitle}>Paris</Text>
+            <Text style={styles.tag}>Food</Text>
+            <Text style={styles.tag}>Culture & Museums</Text>
+            <Text style={styles.tag}>Family Trip</Text>
+          </View>
+          <View style={styles.descriptionView}>
+            <Text style={styles.description}>
+              Paris, Francuska – svetski centar umetnosti, mode i kulture.
+            </Text>
+            <TouchableOpacity style={styles.exploreButton}>
+              <Text style={styles.exploreButtonText}>EXPLORE</Text>
+            </TouchableOpacity>
           </View>
         </View>
+      </View>
 
-        <Text style={styles.sectionTitle}>🥐 HRANA</Text>
-        {foodData.map((item, index) => (
-          <View key={index} style={styles.foodCard}>
-            <Image source={{ uri: item.image }} style={styles.foodImage} />
-            <View style={styles.foodInfo}>
-              <Text style={styles.foodTitle}>{item.title}</Text>
-              <Text style={styles.foodDescription}>{item.description}</Text>
-            </View>
+      <Text style={styles.sectionTitle}>🥐 HRANA</Text>
+      {foodData.map((item, index) => (
+        <TouchableOpacity
+          key={index}
+          style={styles.foodCard}
+          onPress={() => router.push("(tabs)/foodDetails")}
+        >
+          <Image source={{ uri: item.image }} style={styles.foodImage} />
+          <View style={styles.foodInfo}>
+            <Text style={styles.foodTitle}>{item.title}</Text>
+            <Text style={styles.foodDescription}>{item.description}</Text>
           </View>
-        ))}
+        </TouchableOpacity>
+      ))}
 
-        {/* <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
+      {/* <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
         <Text style={styles.logoutButtonText}>Log Out</Text>
       </TouchableOpacity> */}
-      </ScrollView>
+    </ScrollView>
   );
 }
 
