@@ -16,22 +16,6 @@ const _layout = () => {
 };
 
 const RootLayout = () => {
-  const router = useRouter();
-  const {setAuth} = useAuth();
-
-  useEffect(() => {
-    supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('session user: ', session?.user?.id);
-
-      if (session) {
-        setAuth(session?.user);
-        router.replace('/home');
-      } else {
-        setAuth(null);
-        router.replace('/signup');
-      }
-    });
-  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
