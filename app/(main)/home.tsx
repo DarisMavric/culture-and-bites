@@ -14,12 +14,16 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Page() {
+
+
   const router = useRouter();
 
-  const {user,setAuth} = useAuth();
+  const {session} = useAuth();
+
+
+  console.log(session);
   
-  
-  console.log('user: ', user);
+
 
   // Funckija za odjavu
   async function signOut() {
@@ -51,7 +55,7 @@ export default function Page() {
   return (
       <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.header}>
-          <Text style={styles.greeting}>Zdravo, Darise</Text>
+          <Text style={styles.greeting}>Zdravo, Daris</Text>
           <Button title="Log Out" onPress={signOut} />
         </View>
 
