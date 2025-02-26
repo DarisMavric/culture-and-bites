@@ -7,7 +7,11 @@ export default function Page() {
   const { session } = useAuth();
   const router = useRouter();
 
-  router.replace('/home')
+  if(!session){
+    return <Redirect href={'/signin'}/>
+  } else {
+    return <Redirect href={'/home'}/>
+  }
 
   return (
     <View style={{ backgroundColor: "#FAF6E3", flex: 1 }}>
