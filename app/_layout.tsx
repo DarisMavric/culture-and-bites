@@ -1,26 +1,25 @@
 
 import { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
-import { Slot, useRouter } from "expo-router";
+import { Slot, Stack, useRouter } from "expo-router";
 import { supabase } from "../lib/supabase"; // Adjust path as needed
 import { AuthProvider, useAuth } from "../context/AuthContext";
 
 
-const _layout = () => {
-
-  return (
-    <AuthProvider>
-      <RootLayout />
-    </AuthProvider>
-  );
-};
 
 const RootLayout = () => {
 
+
+  
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Slot />
-    </SafeAreaView>
+    <AuthProvider>
+      <Stack>
+        <Stack.Screen name="(main)" options={{headerShown: false}}/>
+        <Stack.Screen name="(auth)" options={{headerShown: false}}/>
+        <Stack.Screen name="index" options={{headerShown: false}}/>
+      </Stack>
+    </AuthProvider>
   );
 };
 
@@ -31,4 +30,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default _layout;
+export default RootLayout;

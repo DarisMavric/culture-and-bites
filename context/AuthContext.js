@@ -15,9 +15,12 @@ export const AuthProvider = ({children}) => {
             const {data,error} = await supabase.auth.getSession();
             setSession(data.session);
             setLoading(false);
-        }  
+        } 
 
         fetchSession();
+        supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session)
+        })
     },[])
 
     return (
