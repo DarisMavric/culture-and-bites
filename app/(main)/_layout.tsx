@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { FlatListComponent, Platform, SafeAreaView, StyleSheet, View } from "react-native";
 import { Slot, Tabs, useRouter } from "expo-router";
 import { AuthProvider, useAuth } from "../../context/AuthContext";
 import { supabase } from "../../lib/supabase";
@@ -11,11 +11,22 @@ const _layout = () => {
   return (
       <Tabs
       screenOptions={{
+        headerShown: false,
         tabBarActiveBackgroundColor: "#2A3663",
-        tabBarInactiveBackgroundColor: "#D8DBBD",
-        tabBarActiveTintColor: '#B59F78',
-        tabBarInactiveTintColor: '#B59F78',
-        headerShown: false
+        tabBarActiveTintColor: "#B59F78",
+        tabBarInactiveTintColor: "#B59F78",
+        tabBarStyle: {
+          position: 'absolute',
+          height: 70,
+          bottom: 0,
+          paddingBottom: 0,
+          backgroundColor: "#D8DBBD",
+          
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "bold",
+          },
       }}
     >
       <Tabs.Screen
@@ -31,8 +42,8 @@ const _layout = () => {
         name="saved"
         options={{
           title: "saved",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="save" color="#B59F78" size={size} />
+          tabBarIcon: ({ color, size, }) => (
+            <Ionicons name="save" color={color} size={size} />
           ),
         }}
       />

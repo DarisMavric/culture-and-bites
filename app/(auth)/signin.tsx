@@ -38,7 +38,7 @@ export default function SignIn() {
   }
 
   return (
-    <SafeAreaView>
+    <View style={{height: '100%'}}>
       <Image style={styles.ImageStyle} source={require("./test.webp")} />
       <View style={styles.welcome}>
         <Text style={styles.WelcomeText}>Welcome To Culture & Bites</Text>
@@ -89,7 +89,7 @@ export default function SignIn() {
       >
         <Link href="/signup">Create New Account</Link>
       </Text>
-    </SafeAreaView>
+    </View>
   );
 }
 

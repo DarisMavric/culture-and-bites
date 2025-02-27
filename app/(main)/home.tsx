@@ -12,6 +12,7 @@ import {
 import { useRouter } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Page() {
 
@@ -52,7 +53,7 @@ export default function Page() {
   ];
 
   return (
-      <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.greeting}>Zdravo, Daris</Text>
           <Button title="Log Out" onPress={signOut} />
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FAF6E3",
-    padding: 10,
+    padding: 10
   },
   descriptionView: {
     flex: 1,
