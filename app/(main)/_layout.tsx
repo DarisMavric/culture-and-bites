@@ -17,7 +17,7 @@ const _layout = () => {
         tabBarInactiveTintColor: "#B59F78",
         tabBarStyle: {
           position: 'absolute',
-          height: 70,
+          height: Platform.OS === 'ios' ? 70 : 60,
           bottom: 0,
           paddingBottom: 0,
           backgroundColor: "#D8DBBD",
@@ -52,16 +52,16 @@ const _layout = () => {
         options={{
           title: "My Trips",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" color="#B59F78" size={size} />
+            <Ionicons name="calendar" color="#B59F78" size={size} />
           ),
         }}
       />
       <Tabs.Screen
         name="account"
         options={{
-          title: "account",
+          title: "Account",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" color="#B59F78" size={size} />
+            <Ionicons name="person" color="#B59F78" size={size} />
           ),
         }}
       />

@@ -17,6 +17,8 @@ const RootLayout = () => {
       <Stack>
         <Stack.Screen name="(main)" options={{headerShown: false}}/>
         <Stack.Screen name="(auth)" options={{headerShown: false}}/>
+        <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+        <Stack.Screen name="(trip)" options={{headerShown: false}}/>
         <Stack.Screen name="index" options={{headerShown: false}}/>
       </Stack>
     </AuthProvider>
@@ -26,7 +28,7 @@ const RootLayout = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#FAF6E3",
   },
 });
 

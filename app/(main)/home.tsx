@@ -54,7 +54,7 @@ export default function Page() {
       <View style={{flex: 1}}>
       <ScrollView style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.greeting}>Zdravo, {session.user.user_metadata.name + 'e'}</Text>
+          <Text style={styles.greeting}>Zdravo, <Text style={{color: "#B59F78"}}>{session.user.user_metadata.name + 'e'}</Text></Text>
           <Button title="Log Out" onPress={signOut} />
         </View>
 
@@ -98,7 +98,7 @@ export default function Page() {
           <TouchableOpacity
             key={index}
             style={styles.foodCard}
-            onPress={() => router.push("(tabs)/foodDetails")}
+            onPress={() => router.push("(trip)/interests")}
           >
             <Image source={{ uri: item.image }} style={styles.foodImage} />
             <View style={styles.foodInfo}>
