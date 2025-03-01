@@ -1,37 +1,33 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
-    useFonts,
-    LeagueSpartan_100Thin,
-    LeagueSpartan_200ExtraLight,
-    LeagueSpartan_300Light,
-    LeagueSpartan_400Regular,
-    LeagueSpartan_500Medium,
-    LeagueSpartan_600SemiBold,
-    LeagueSpartan_700Bold,
-    LeagueSpartan_800ExtraBold,
-    LeagueSpartan_900Black,
-  } from '@expo-google-fonts/league-spartan';
+  useFonts,
+  LeagueSpartan_700Bold,
+} from "@expo-google-fonts/league-spartan";
+import { useState } from "react";
 
 export default function Page() {
+  let [fontsLoaded] = useFonts({
+    LeagueSpartan_700Bold,
+  });
 
-    let [fontsLoaded] = useFonts({
-        LeagueSpartan_100Thin,
-        LeagueSpartan_200ExtraLight,
-        LeagueSpartan_300Light,
-        LeagueSpartan_400Regular,
-        LeagueSpartan_500Medium,
-        LeagueSpartan_600SemiBold,
-        LeagueSpartan_700Bold,
-        LeagueSpartan_800ExtraBold,
-        LeagueSpartan_900Black,
-      });
+  const [selectedButtons, setSelectedButtons] = useState([]);
 
-      
-      if(!fontsLoaded){
-        return <Text>asdasdasd</Text>;
+  const isSelected = (option) => selectedButtons.includes(option);
+
+  const selected = (value) => {
+     setSelectedButtons((prevSelected) => {
+      if(prevSelected.includes(value)) {
+        return prevSelected.filter((item) => item !== value)
+      } else {
+        return [...prevSelected, value]
       }
+     })
+  }
 
+  if (!fontsLoaded) {
+    return <Text>asdasdasd</Text>;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -45,8 +41,18 @@ export default function Page() {
         />
         <Text style={styles.imageText}>Paris</Text>
       </View>
-      <View>
-        <Text>Paris</Text>
+      <View style={{ padding: 10 }}>
+        <View>
+          <Text style={styles.title}>Hrana i Restorani</Text>
+        </View>
+        <View style={{flexDirection: "row", flexWrap: "wrap"}}>
+          <TouchableOpacity
+            style={[styles.button, isSelected('Kafici') && styles.pressedButton]}
+            onPress={() => selected('Kafici')}
+          >
+            <Text style={styles.pick}>Kafici i Poslasticarnice</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -61,13 +67,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#2A3663",
   },
   imageText: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     fontSize: 40,
     margin: 10,
     color: "#D8DBBD",
-    fontFamily: "LeagueSpartan_700Bold"
-
   },
   image: {
     resizeMode: "cover",
@@ -75,4 +79,27 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 120,
   },
+  title: { fontSize: 30, color: "#2A3663",fontFamily: "LeagueSpartan_700Bold",marginBottom: 5,},
+  button: {
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+    margin: 5,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#D8DBBD",
+  },
+
+  pick: {
+    fontSize: 15,
+    fontFamily: "LeagueSpartan_700Bold",
+    color: "#444",
+  },
+
+  pressedButton: {
+    color: '#fff',
+    backgroundColor: "#B59F78"
+  }
 });
