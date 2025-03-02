@@ -1,32 +1,35 @@
 import { useEffect, useState } from "react";
-import { FlatListComponent, Platform, SafeAreaView, StyleSheet, View } from "react-native";
+import {
+  FlatListComponent,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Slot, Tabs, useRouter } from "expo-router";
 import { AuthProvider, useAuth } from "../../context/AuthContext";
 import { supabase } from "../../lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
 
-
 const _layout = () => {
-    
   return (
-      <Tabs
+    <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveBackgroundColor: "#2A3663",
         tabBarActiveTintColor: "#B59F78",
         tabBarInactiveTintColor: "#B59F78",
         tabBarStyle: {
-          position: 'absolute',
-          height: Platform.OS === 'ios' ? 70 : 60,
+          position: "absolute",
+          height: Platform.OS === "ios" ? 70 : 60,
           bottom: 0,
           paddingBottom: 0,
           backgroundColor: "#D8DBBD",
-          
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "bold",
-          },
+        },
       }}
     >
       <Tabs.Screen
@@ -42,7 +45,7 @@ const _layout = () => {
         name="saved"
         options={{
           title: "saved",
-          tabBarIcon: ({ color, size, }) => (
+          tabBarIcon: ({ color, size }) => (
             <Ionicons name="save" color={color} size={size} />
           ),
         }}
@@ -68,6 +71,5 @@ const _layout = () => {
     </Tabs>
   );
 };
-
 
 export default _layout;

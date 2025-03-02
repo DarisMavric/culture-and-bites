@@ -23,14 +23,16 @@ export default function SignIn() {
 
   async function signInWithEmail() {
     setLoading(true);
-    const { error, data: {session} } = await supabase.auth.signInWithPassword({
+    const {
+      error,
+      data: { session },
+    } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
 
-
-    if(session) {
-      router.push('/home');
+    if (session) {
+      router.push("/home");
     }
 
     if (error) Alert.alert(error.message);
@@ -38,7 +40,7 @@ export default function SignIn() {
   }
 
   return (
-    <View style={{height: '100%'}}>
+    <View style={{ height: "100%" }}>
       <Image style={styles.ImageStyle} source={require("./test.webp")} />
       <View style={styles.welcome}>
         <Text style={styles.WelcomeText}>Welcome To Culture & Bites</Text>
@@ -62,6 +64,7 @@ export default function SignIn() {
           value={password}
           placeholder="Password"
           placeholderTextColor="#D8DBBD"
+          secureTextEntry={true}
         />
       </View>
       <View style={styles.buttons}>
@@ -126,7 +129,7 @@ const styles = StyleSheet.create({
     height: 45,
     backgroundColor: "#B59F78",
     borderRadius: 10,
-    color: "#D8DBBD"
+    color: "#D8DBBD",
   },
   buttons: {
     shadowColor: "0",

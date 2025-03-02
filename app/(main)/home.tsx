@@ -7,43 +7,52 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  Button,
   Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 export default function Page() {
   const router = useRouter();
-
   const { session } = useAuth();
 
-  console.log(session.user.user_metadata.name);
-
-  // Funckija za odjavu
   async function signOut() {
     const { error } = await supabase.auth.signOut();
     if (!error) {
       router.replace("/signin");
-    } else {
-      console.log("Sign out error:", error);
     }
   }
 
   const foodData = [
     {
-      title: "Croissant, Paris",
+      food: "Croissant",
+      place: "Paris",
       description:
         "Croissant je jedan od najpoznatijih francuskih peciva. Uživajte u svakom zalogaju!",
+      isPopular: true,
+      badge: "Ulicna hrana",
       image:
         "https://s3-alpha-sig.figma.com/img/ad69/007d/c4d898e1f34d2c4e6d4c85c7871715fd?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=s~Vghb5xOCdwNJOABZPow36-UV5ppZIx~16nfyw~wHTfVM7y6GfXcmiVJQtRlrveGSLE-bDv-wtXOxIK8D9JrXP1SD96pz76Vz95UwJqoke6qEtA9LWwwk3AGgu97NoJS4N7yNPF51DbQYHDj9vMK8SG3Cij1IFv48AqDjvzc3yXA~O4ZWsHvPbc-X0MXQH7ij55v6XE-a5C0OOMQeWzM5cocggh7PmHXPRHInttcZtpH9APULyiDJ1iFFCf89yCH5iwMKcowFlEmyXH7Qo59Kvtj~D9aE7cN4OlxKF72VtvLAy4RN~ZAENB3c1vKT7U6M3y~M5srriA2Qg~qocTew__",
     },
     {
-      title: "Croissant, Paris",
+      food: "Croissant",
+      place: "Paris",
       description:
         "Croissant je jedan od najpoznatijih francuskih peciva. Uživajte u svakom zalogaju!",
+      isPopular: false,
+      badge: "Ulicna hrana",
+      image:
+        "https://s3-alpha-sig.figma.com/img/ad69/007d/c4d898e1f34d2c4e6d4c85c7871715fd?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=s~Vghb5xOCdwNJOABZPow36-UV5ppZIx~16nfyw~wHTfVM7y6GfXcmiVJQtRlrveGSLE-bDv-wtXOxIK8D9JrXP1SD96pz76Vz95UwJqoke6qEtA9LWwwk3AGgu97NoJS4N7yNPF51DbQYHDj9vMK8SG3Cij1IFv48AqDjvzc3yXA~O4ZWsHvPbc-X0MXQH7ij55v6XE-a5C0OOMQeWzM5cocggh7PmHXPRHInttcZtpH9APULyiDJ1iFFCf89yCH5iwMKcowFlEmyXH7Qo59Kvtj~D9aE7cN4OlxKF72VtvLAy4RN~ZAENB3c1vKT7U6M3y~M5srriA2Qg~qocTew__",
+    },
+    {
+      food: "Croissant",
+      place: "Paris",
+      description:
+        "Croissant je jedan od najpoznatijih francuskih peciva. Uživajte u svakom zalogaju!",
+      isPopular: false,
+      badge: "Ulicna hrana",
       image:
         "https://s3-alpha-sig.figma.com/img/ad69/007d/c4d898e1f34d2c4e6d4c85c7871715fd?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=s~Vghb5xOCdwNJOABZPow36-UV5ppZIx~16nfyw~wHTfVM7y6GfXcmiVJQtRlrveGSLE-bDv-wtXOxIK8D9JrXP1SD96pz76Vz95UwJqoke6qEtA9LWwwk3AGgu97NoJS4N7yNPF51DbQYHDj9vMK8SG3Cij1IFv48AqDjvzc3yXA~O4ZWsHvPbc-X0MXQH7ij55v6XE-a5C0OOMQeWzM5cocggh7PmHXPRHInttcZtpH9APULyiDJ1iFFCf89yCH5iwMKcowFlEmyXH7Qo59Kvtj~D9aE7cN4OlxKF72VtvLAy4RN~ZAENB3c1vKT7U6M3y~M5srriA2Qg~qocTew__",
     },
@@ -51,100 +60,138 @@ export default function Page() {
 
   return (
     <SafeAreaProvider>
-      <View style={{flex: 1}}>
-      <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.greeting}>Zdravo, <Text style={{color: "#B59F78"}}>{session.user.user_metadata.name + 'e'}</Text></Text>
-          <Button title="Log Out" onPress={signOut} />
-        </View>
-
-        <View style={styles.searchContainer}>
-          <TextInput
-            placeholder="Istraži Destinacije..."
-            style={styles.searchInput}
-            placeholderTextColor="#444"
-          />
-        </View>
-
-        <Text style={styles.sectionTitle}>Preporučeno</Text>
-
-        <View style={styles.recommendedCard}>
-          <Image
-            source={{
-              uri: "https://s3-alpha-sig.figma.com/img/4921/b274/f484dbd21c977ec1f30bb12b6dbf30bf?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=CmEl-pdbZor0K3C-Bd4ju9FxLIgJPMTaM4fhFs1~5r-PZvcCa12kX9qTmTLv~MqRHeiAbGgtMNpn9L-RAnfF976BZKPFjjWxVYsv1Jx0zAW6yNiT7xKsThECdihsNf4Dz7vrkGpc~wlMBPx0Lx6J-TeI5BDKPzNBc4Zmq0hpcpttZ73KibGkuwDAu2kLcT6pN64y5Um0ceX4FiKu7FjkMiqkET1hCd5xQDHzpywINIaFcxZc1VwiXGgGnJPZGBDMIGMbH9bN7RS2CfXLzSIW~5ywb3uavjerbCpAS0n1Hwqhhaw4OHN2SPXWYF7f7MddziGFCx~mI0P3OwNoTfYBAw__",
-            }}
-            style={styles.recommendedImage}
-          />
-          <View style={styles.recommendedContent}>
-            <View style={styles.tagsRow}>
-              <Text style={styles.cityTitle}>Paris</Text>
-              <Text style={styles.tag}>Food</Text>
-              <Text style={styles.tag}>Culture & Museums</Text>
-              <Text style={styles.tag}>Family Trip</Text>
-            </View>
-            <View style={styles.descriptionView}>
-              <Text style={styles.description}>
-                Paris, Francuska – svetski centar umetnosti, mode i kulture.
+      <ScrollView
+        style={{ backgroundColor: "#FAF6E3" }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}
+      >
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.greeting}>
+              Zdravo,{" "}
+              <Text style={styles.highlight}>
+                {session.user.user_metadata.name}e
               </Text>
-              <TouchableOpacity style={styles.exploreButton}>
-                <Text style={styles.exploreButtonText}>EXPLORE</Text>
-              </TouchableOpacity>
+            </Text>
+            <TouchableOpacity onPress={signOut}>
+              <FontAwesome name="user" size={30} color="black" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.searchContainer}>
+            <TextInput
+              placeholder="Istraži Destinacije..."
+              style={styles.searchInput}
+              placeholderTextColor="#444"
+            />
+          </View>
+          <Text style={styles.sectionTitle}>Preporučeno</Text>
+          <View style={styles.recommendedCard}>
+            <Image
+              source={{
+                uri: "https://s3-alpha-sig.figma.com/img/4921/b274/f484dbd21c977ec1f30bb12b6dbf30bf?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=CmEl-pdbZor0K3C-Bd4ju9FxLIgJPMTaM4fhFs1~5r-PZvcCa12kX9qTmTLv~MqRHeiAbGgtMNpn9L-RAnfF976BZKPFjjWxVYsv1Jx0zAW6yNiT7xKsThECdihsNf4Dz7vrkGpc~wlMBPx0Lx6J-TeI5BDKPzNBc4Zmq0hpcpttZ73KibGkuwDAu2kLcT6pN64y5Um0ceX4FiKu7FjkMiqkET1hCd5xQDHzpywINIaFcxZc1VwiXGgGnJPZGBDMIGMbH9bN7RS2CfXLzSIW~5ywb3uavjerbCpAS0n1Hwqhhaw4OHN2SPXWYF7f7MddziGFCx~mI0P3OwNoTfYBAw__",
+              }}
+              style={styles.recommendedImage}
+            />
+            <View style={styles.recommendedContent}>
+              <View style={styles.tagsRow}>
+                <Text style={styles.cityTitle}>Paris</Text>
+                <Text style={styles.tag}>Food</Text>
+                <Text style={styles.tag}>Culture & Museums</Text>
+                <Text style={styles.tag}>Family Trip</Text>
+              </View>
+              <View style={styles.descriptionView}>
+                <Text style={styles.description}>
+                  Paris, Francuska – svetski centar umetnosti, mode i kulture.
+                </Text>
+                <TouchableOpacity style={styles.exploreButton}>
+                  <Text style={styles.exploreButtonText}>EXPLORE</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
+          <View style={styles.foodContainer}>
+            <Text style={styles.sectionTitle}>🥐 HRANA</Text>
+            {foodData.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.foodCard}
+                onPress={() => router.push("(trip)/interests")}
+              >
+                <Image source={{ uri: item.image }} style={styles.foodImage} />
+                <View style={styles.foodInfo}>
+                  <View style={styles.foodName}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                      }}
+                    >
+                      <Text style={styles.foodTitle}>{item.food}, </Text>
+                      <Text style={[styles.foodTitle, { color: "#B59F78" }]}>
+                        {item.place}
+                      </Text>
+                    </View>
+
+                    <TouchableOpacity style={styles.badgeButton}>
+                      <Text style={styles.badgeButtonText}>{item.badge}</Text>
+                    </TouchableOpacity>
+                    {item.isPopular && (
+                      <TouchableOpacity style={styles.popularButton}>
+                        <Text style={styles.popularButtonText}>POPULAR</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <View style={styles.foodBadges}>
+                    <Text style={styles.foodDescription}>
+                      {item.description}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-
-        <Text style={styles.sectionTitle}>🥐 HRANA</Text>
-        {foodData.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.foodCard}
-            onPress={() => router.push("(trip)/interests")}
-          >
-            <Image source={{ uri: item.image }} style={styles.foodImage} />
-            <View style={styles.foodInfo}>
-              <Text style={styles.foodTitle}>{item.title}</Text>
-              <Text style={styles.foodDescription}>{item.description}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-
-        {/* <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
-        <Text style={styles.logoutButtonText}>Log Out</Text>
-      </TouchableOpacity> */}
       </ScrollView>
-      </View>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#FAF6E3",
-    padding: 10,
-    paddingTop: Platform.OS === "ios" ? 45 : 10, // Podesi marginu na iOS
+  foodContainer: {
+    // flex: 1,
   },
-  descriptionView: {
-    flex: 1,
-    flexDirection: "row",
-    width: "auto",
+  container: {
+    padding: 10,
+    paddingTop: Platform.OS === "ios" ? 45 : 10,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
+    justifyContent: "space-between",
   },
   greeting: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#333",
-    flex: 1,
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  highlight: {
+    color: "#B59F78",
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  userIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
   },
   searchContainer: {
     marginVertical: 10,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#D8DBBD",
-    color: "#444",
     borderRadius: 25,
     paddingHorizontal: 15,
     paddingVertical: 5,
@@ -153,13 +200,16 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: "#333",
-    padding: 10
+    padding: 10,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginVertical: 10,
     color: "#333",
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   recommendedCard: {
     backgroundColor: "#2A3663",
@@ -178,27 +228,35 @@ const styles = StyleSheet.create({
   recommendedContent: {
     padding: 10,
   },
+  tagsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginVertical: 5,
+  },
   cityTitle: {
     fontSize: 20,
     paddingRight: 10,
     fontWeight: "bold",
     marginBottom: 5,
     color: "#D8DBBD",
-  },
-  tagsRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginVertical: 5,
+    textShadowColor: "rgba(0,0,0,0.7)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   tag: {
-    backgroundColor: "#e8e8e8",
+    backgroundColor: "#F5A623BF",
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 4,
     marginRight: 6,
     marginBottom: 6,
     fontSize: 12,
-    color: "#333",
+    color: "#ffffff",
+  },
+  descriptionView: {
+    flex: 1,
+    flexDirection: "row",
+    width: "auto",
   },
   description: {
     fontSize: 14,
@@ -206,9 +264,9 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     width: "70%",
     fontWeight: "bold",
-    textShadowColor: "black", // Stroke color
-    textShadowOffset: { width: 2, height: 2 }, // Adjust stroke thickness
-    textShadowRadius: 3, // Soften the edges
+    textShadowColor: "black",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 3,
   },
   exploreButton: {
     backgroundColor: "#A6B89F",
@@ -222,7 +280,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
-
   foodCard: {
     flexDirection: "row",
     backgroundColor: "#D8DBBD",
@@ -235,35 +292,72 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   foodImage: {
-    width: 86,
+    width: 100,
     height: "auto",
   },
   foodInfo: {
     flex: 1,
-    padding: 10,
+    paddingTop: 10,
     justifyContent: "center",
+    // paddingRight: 10,
+  },
+  foodName: {
+    flexDirection: "row",
+
+    width: "100%",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   foodTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 4,
+
     color: "#2A3663",
+    textShadowColor: "rgba(0,0,0,0.2)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
   },
   foodDescription: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#B59F78",
+    fontWeight: "700",
+    letterSpacing: 0.5,
+    padding: 4,
+  },
+  foodBadges: {
     backgroundColor: "#2A3663",
-  },
 
-  logoutButton: {
-    backgroundColor: "#444",
-    borderRadius: 8,
-    padding: 12,
-    marginVertical: 20,
-    alignItems: "center",
+    padding: 5,
+    fontWeight: "bold",
+    textShadowColor: "black",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 6,
   },
-  logoutButtonText: {
+  popularButton: {
+    backgroundColor: "#E4C1D9BF",
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    alignSelf: "center",
+    marginHorizontal: 4,
+  },
+  popularButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontWeight: "bold",
+    fontSize: 9,
+  },
+  badgeButton: {
+    backgroundColor: "#F5A623BF",
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    alignSelf: "flex-end",
+    marginLeft: 4,
+  },
+  badgeButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    fontSize: 9,
   },
 });
