@@ -4,7 +4,8 @@ import {
   useFonts,
   LeagueSpartan_700Bold,
 } from "@expo-google-fonts/league-spartan";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
 
 export default function Page() {
   let [fontsLoaded] = useFonts({
@@ -12,8 +13,24 @@ export default function Page() {
   });
 
   const [selectedButtons, setSelectedButtons] = useState([]);
+  const [locations, setLocations] = useState([]);
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      const { data, error } = await supabase.from('cities').select('*');
+
+      if (error) {
+        console.error('Error fetching locations:', error);
+      } else {
+        setLocations(data);
+      }
+    };
+
+    fetchLocations();
+  }, []);
 
   const isSelected = (option) => selectedButtons.includes(option);
+  console.log(locations[0]?.name);
 
   const selected = (value) => {
      setSelectedButtons((prevSelected) => {
@@ -52,8 +69,18 @@ export default function Page() {
           >
             <Text style={styles.pick}>Kafici i Poslasticarnice</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, isSelected('Restorani') && styles.pressedButton]}
+            onPress={() => selected('Restorani')}
+          >
+            <Text style={styles.pick}>Restorani</Text>
+          </TouchableOpacity>
         </View>
+
       </View>
+      <TouchableOpacity style={styles.nextButton}>
+        <Text style={{fontSize: 25,color: "#fff", fontFamily: "LeagueSpartan_700Bold"}}>DALJE</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -101,5 +128,16 @@ const styles = StyleSheet.create({
   pressedButton: {
     color: '#fff',
     backgroundColor: "#B59F78"
+  },
+  nextButton: {
+    backgroundColor: "#A6B89F",
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 20,
+    position: 'absolute',
+    bottom: 20,
+    right: 10
   }
 });
