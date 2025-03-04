@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Platform,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { supabase } from "../../lib/supabase";
@@ -17,6 +18,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 export default function Page() {
   const router = useRouter();
   const { session } = useAuth();
+  const [foodLocations,setFoodLocations] = useState([])
 
   async function signOut() {
     const { error } = await supabase.auth.signOut();
@@ -25,38 +27,20 @@ export default function Page() {
     }
   }
 
-  const foodData = [
-    {
-      food: "Croissant",
-      place: "Paris",
-      description:
-        "Croissant je jedan od najpoznatijih francuskih peciva. Uživajte u svakom zalogaju!",
-      isPopular: true,
-      badge: "Ulicna hrana",
-      image:
-        "https://s3-alpha-sig.figma.com/img/ad69/007d/c4d898e1f34d2c4e6d4c85c7871715fd?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=s~Vghb5xOCdwNJOABZPow36-UV5ppZIx~16nfyw~wHTfVM7y6GfXcmiVJQtRlrveGSLE-bDv-wtXOxIK8D9JrXP1SD96pz76Vz95UwJqoke6qEtA9LWwwk3AGgu97NoJS4N7yNPF51DbQYHDj9vMK8SG3Cij1IFv48AqDjvzc3yXA~O4ZWsHvPbc-X0MXQH7ij55v6XE-a5C0OOMQeWzM5cocggh7PmHXPRHInttcZtpH9APULyiDJ1iFFCf89yCH5iwMKcowFlEmyXH7Qo59Kvtj~D9aE7cN4OlxKF72VtvLAy4RN~ZAENB3c1vKT7U6M3y~M5srriA2Qg~qocTew__",
-    },
-    {
-      food: "Croissant",
-      place: "Paris",
-      description:
-        "Croissant je jedan od najpoznatijih francuskih peciva. Uživajte u svakom zalogaju!",
-      isPopular: false,
-      badge: "Ulicna hrana",
-      image:
-        "https://s3-alpha-sig.figma.com/img/ad69/007d/c4d898e1f34d2c4e6d4c85c7871715fd?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=s~Vghb5xOCdwNJOABZPow36-UV5ppZIx~16nfyw~wHTfVM7y6GfXcmiVJQtRlrveGSLE-bDv-wtXOxIK8D9JrXP1SD96pz76Vz95UwJqoke6qEtA9LWwwk3AGgu97NoJS4N7yNPF51DbQYHDj9vMK8SG3Cij1IFv48AqDjvzc3yXA~O4ZWsHvPbc-X0MXQH7ij55v6XE-a5C0OOMQeWzM5cocggh7PmHXPRHInttcZtpH9APULyiDJ1iFFCf89yCH5iwMKcowFlEmyXH7Qo59Kvtj~D9aE7cN4OlxKF72VtvLAy4RN~ZAENB3c1vKT7U6M3y~M5srriA2Qg~qocTew__",
-    },
-    {
-      food: "Croissant",
-      place: "Paris",
-      description:
-        "Croissant je jedan od najpoznatijih francuskih peciva. Uživajte u svakom zalogaju!",
-      isPopular: false,
-      badge: "Ulicna hrana",
-      image:
-        "https://s3-alpha-sig.figma.com/img/ad69/007d/c4d898e1f34d2c4e6d4c85c7871715fd?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=s~Vghb5xOCdwNJOABZPow36-UV5ppZIx~16nfyw~wHTfVM7y6GfXcmiVJQtRlrveGSLE-bDv-wtXOxIK8D9JrXP1SD96pz76Vz95UwJqoke6qEtA9LWwwk3AGgu97NoJS4N7yNPF51DbQYHDj9vMK8SG3Cij1IFv48AqDjvzc3yXA~O4ZWsHvPbc-X0MXQH7ij55v6XE-a5C0OOMQeWzM5cocggh7PmHXPRHInttcZtpH9APULyiDJ1iFFCf89yCH5iwMKcowFlEmyXH7Qo59Kvtj~D9aE7cN4OlxKF72VtvLAy4RN~ZAENB3c1vKT7U6M3y~M5srriA2Qg~qocTew__",
-    },
-  ];
+  useEffect(() => {
+      const fetchLocations = async () => {
+        const { data, error } = await supabase.from("destinations").select("*");
+  
+        if (error) {
+          console.error("Error fetching locations:", error);
+          Alert.alert("Error", "Failed to load locations.");
+        } else {
+          setFoodLocations(data);
+        }
+      };
+  
+      fetchLocations();
+    }, []);
 
   return (
     <SafeAreaProvider>
@@ -110,13 +94,13 @@ export default function Page() {
           </View>
           <View style={styles.foodContainer}>
             <Text style={styles.sectionTitle}>🥐 HRANA</Text>
-            {foodData.map((item, index) => (
+            {foodLocations.map((item, index) => (
               <TouchableOpacity
                 key={index}
                 style={styles.foodCard}
-                onPress={() => router.push("(trip)/dates")}
+                onPress={() => router.push("(tabs)/foodDetails")}
               >
-                <Image source={{ uri: item.image }} style={styles.foodImage} />
+                <Image source={{ uri: item?.image }} style={styles.foodImage} />
                 <View style={styles.foodInfo}>
                   <View style={styles.foodName}>
                     <View
@@ -124,16 +108,16 @@ export default function Page() {
                         flexDirection: "row",
                       }}
                     >
-                      <Text style={styles.foodTitle}>{item.food}, </Text>
+                      <Text style={styles.foodTitle}>{item?.name}, </Text>
                       <Text style={[styles.foodTitle, { color: "#B59F78" }]}>
-                        {item.place}
+                        {item?.city}
                       </Text>
                     </View>
 
                     <TouchableOpacity style={styles.badgeButton}>
-                      <Text style={styles.badgeButtonText}>{item.badge}</Text>
+                      <Text style={styles.badgeButtonText}>{item.type}</Text>
                     </TouchableOpacity>
-                    {item.isPopular && (
+                    {item?.isPopular && (
                       <TouchableOpacity style={styles.popularButton}>
                         <Text style={styles.popularButtonText}>POPULAR</Text>
                       </TouchableOpacity>
