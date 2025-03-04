@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, View, Alert } from "react-native";
+import { Image, StyleSheet, Text, View, Alert, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../../lib/supabase";
 import CalendarPicker from 'react-native-calendar-picker';
-import { format } from 'date-fns';  // Importing format from date-fns
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function Dates() {
   const [locations, setLocations] = useState([]);
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -32,6 +33,12 @@ export default function Dates() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableOpacity
+            style={styles.homeButton}
+            onPress={() => router.push("/interests")}
+        >
+            <Ionicons name="home" color="#B59F78" size={24} />
+      </TouchableOpacity>
       <View style={styles.imageContainer}>
         <Image
           source={{
@@ -56,6 +63,9 @@ export default function Dates() {
           }} 
         />
       </View>
+      <TouchableOpacity style={styles.nextButton} onPress={() => router.push("/whoIsGoing")}>
+          <Text style={{fontSize: 25,color: "#fff", fontFamily: "LeagueSpartan_700Bold"}}>DALJE</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -67,7 +77,6 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     backgroundColor: "#2A3663",
-    paddingBottom: 10,
   },
   imageText: {
     position: "absolute",
@@ -75,16 +84,16 @@ const styles = StyleSheet.create({
     fontSize: 40,
     margin: 10,
     color: "#D8DBBD",
+    fontFamily: "LeagueSpartan_700Bold",
   },
   image: {
+    resizeMode: "cover",
+    opacity: 0.3,
     width: "100%",
     height: 120,
-    opacity: 0.3,
   },
   calendarContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     paddingTop: 20,
   },
   selectedDateText: {
@@ -92,4 +101,27 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
+  homeButton: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    zIndex: 1,
+    alignSelf: "flex-start",
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 50,
+    marginBottom: 20,
+    elevation: 5,
+  },
+  nextButton: {
+    backgroundColor: "#A6B89F",
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 20,
+    position: 'absolute',
+    bottom: 20,
+    right: 10
+  }
 });

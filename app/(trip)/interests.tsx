@@ -6,6 +6,8 @@ import {
 } from "@expo-google-fonts/league-spartan";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function Page() {
   let [fontsLoaded] = useFonts({
@@ -14,6 +16,8 @@ export default function Page() {
 
   const [selectedButtons, setSelectedButtons] = useState([]);
   const [locations, setLocations] = useState([]);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -49,6 +53,12 @@ export default function Page() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.imageContainer}>
+        <TouchableOpacity
+                    style={styles.homeButton}
+                    onPress={() => router.push("/home")}
+                >
+                    <Ionicons name="home" color="#B59F78" size={24} />
+              </TouchableOpacity>
         <Image
           source={{
             uri: locations[0]?.cityImage,
@@ -78,7 +88,7 @@ export default function Page() {
         </View>
 
       </View>
-      <TouchableOpacity style={styles.nextButton}>
+      <TouchableOpacity style={styles.nextButton} onPress={() => router.push("/dates")}>
         <Text style={{fontSize: 25,color: "#fff", fontFamily: "LeagueSpartan_700Bold"}}>DALJE</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -105,6 +115,18 @@ const styles = StyleSheet.create({
     opacity: 0.3,
     width: "100%",
     height: 120,
+  },
+  homeButton: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    zIndex: 1,
+    alignSelf: "flex-start",
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 50,
+    marginBottom: 20,
+    elevation: 5,
   },
   title: { fontSize: 30, color: "#2A3663",fontFamily: "LeagueSpartan_700Bold",marginBottom: 5,},
   button: {
