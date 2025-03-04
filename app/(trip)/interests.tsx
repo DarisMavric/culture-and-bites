@@ -51,7 +51,7 @@ export default function Page() {
       <View style={styles.imageContainer}>
         <Image
           source={{
-            uri: "https://gratisography.com/wp-content/uploads/2025/01/gratisography-dog-vacation-1170x780.jpg",
+            uri: locations[0]?.cityImage,
           }}
           style={styles.image}
           resizeMode="cover"
