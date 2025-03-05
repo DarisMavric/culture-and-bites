@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useFonts,
@@ -8,16 +8,25 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Page() {
+
+
+  const { session } = useAuth();
+
   let [fontsLoaded] = useFonts({
     LeagueSpartan_700Bold,
   });
 
   const [selectedButtons, setSelectedButtons] = useState([]);
   const [locations, setLocations] = useState([]);
+  const [foodPreferences,setFoodPreferences] = useState([]);
 
   const router = useRouter();
+
+  console.log(foodPreferences);
+  console.log(session?.user.email)
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -33,11 +42,22 @@ export default function Page() {
     fetchLocations();
   }, []);
 
-  const isSelected = (option) => selectedButtons.includes(option);
+  const nextButton = async() => {
+        const { data, error } = await supabase.from("users").update({preferences: foodPreferences}).eq('email', session?.user.email);
+    
+          if (error) {
+            console.error("Error fetching locations:", error);
+            Alert.alert("Error", "Failed to load locations.");
+          } else {
+            router.replace('/dates')
+      }
+  }
+
+  const isSelected = (option) => foodPreferences.includes(option);
   console.log(locations[0]?.name);
 
   const selected = (value) => {
-     setSelectedButtons((prevSelected) => {
+     setFoodPreferences((prevSelected) => {
       if(prevSelected.includes(value)) {
         return prevSelected.filter((item) => item !== value)
       } else {
@@ -88,7 +108,7 @@ export default function Page() {
         </View>
 
       </View>
-      <TouchableOpacity style={styles.nextButton} onPress={() => router.push("/dates")}>
+      <TouchableOpacity style={styles.nextButton} onPress={() => nextButton()}>
         <Text style={{fontSize: 25,color: "#fff", fontFamily: "LeagueSpartan_700Bold"}}>DALJE</Text>
       </TouchableOpacity>
     </SafeAreaView>
