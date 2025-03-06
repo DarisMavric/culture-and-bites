@@ -7,13 +7,15 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  Image,
+  Button,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
-export default function FoodDetails() {
+export default function myPlan() {
   const router = useRouter();
 
   const data = {
@@ -44,7 +46,7 @@ export default function FoodDetails() {
           {
             activitiTitle: "Ajfleov Toranj (Lokacije)",
             activityDescription:
-              "Simbol Pariza i jedna od najposecenijih turisnickih atrakcija na svetu. Sagradjena 1889. goine za Svetsku izlozbu i prvobitno je trebalo da bude privremena konstrukcija",
+              "Simbol Pariza i jedna od najposecenijih turisnickih atrakcija na svetu.",
             activityImage:
               "./eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png",
           },
@@ -55,38 +57,82 @@ export default function FoodDetails() {
 
   return (
     <ScrollView style={styles.container}>
-      <TouchableOpacity
-        style={styles.homeButton}
-        onPress={() => router.push("/home")}
-      >
-        <Ionicons name="home" color="#B59F78" size={24} />
-      </TouchableOpacity>
-
       <ImageBackground
         source={require("./eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png")}
         style={styles.topImage}
         imageStyle={{ borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}
       >
+        <TouchableOpacity
+          style={styles.homeButton}
+          onPress={() => router.push("/home")}
+        >
+          <Ionicons name="home" color="#B59F78" size={30} />
+        </TouchableOpacity>
+
         <View style={styles.textContainer}>
           <Text style={styles.sectionTitle}>{data.title}</Text>
           <Text style={styles.seciondTitle}>Travel Plan</Text>
         </View>
       </ImageBackground>
 
-      <View>
+      <View style={{ padding: 10 }}>
         {data.days.map((day) => (
           <View>
-            <Text style={styles.dayTitle}>{day.dayTitle}</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+              }}
+            >
+              <Text style={styles.dayTitle}>{day.dayTitle}</Text>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "rgb(216, 219, 189)",
+                  color: "rgb(68,68,68)",
+                  padding: 5,
+                  borderRadius: 10,
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text>Add Activity </Text>
+                  <Ionicons name="add" color="rgb(68,68,68)" size={20} />
+                </View>
+              </TouchableOpacity>
+            </View>
 
             {day.activities.map((activity, index) => (
-              <View style={styles.locationDiv} key={index}>
-                <View style={styles.locationRight}>
-                  <Text style={styles.userNameStyle}>
-                    {activity.activitiTitle}
-                  </Text>
-                  <Text style={styles.adressStyle}>
-                    {activity.activityDescription}
-                  </Text>
+              <View style={styles.activityDiv} key={index}>
+                <Image
+                  source={
+                    activity.activityImage.startsWith("http")
+                      ? { uri: activity.activityImage }
+                      : require("./eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png") // Ako je lokalna
+                  }
+                  style={styles.activityIMG}
+                />
+
+                <View style={{ flexDirection: "column" }}>
+                  <View style={styles.activityRight}>
+                    <Text style={styles.activityTitle}>
+                      {activity.activitiTitle}
+                    </Text>
+                    <Text style={styles.activityStyle}>
+                      {activity.activityDescription}
+                    </Text>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginBottom: 10,
+                      gap: 5,
+                      padding: 5,
+                    }}
+                  >
+                    <Ionicons name="trash" size={22} />
+                    <Ionicons name="share-social-outline" size={22} />
+                  </View>
                 </View>
               </View>
             ))}
@@ -105,12 +151,18 @@ const styles = StyleSheet.create({
   },
 
   homeButton: {
-    padding: 16,
+    position: "absolute",
+    top: 10,
+    left: 10,
+    zIndex: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    padding: 10,
+    borderRadius: 50,
   },
 
   topImage: {
     width: "100%",
-    height: 150,
+    height: 200,
     justifyContent: "flex-end",
   },
 
@@ -133,30 +185,11 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
 
-  commentDiv: {
-    backgroundColor: "#D8DBBD",
-    marginTop: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    borderRadius: 15,
-    padding: 10,
-  },
-
-  upStyle: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-
-  rightStyle: {
-    padding: 10,
-  },
-
-  userNameStyle: {
+  activityTitle: {
     color: "#2A3663F5",
     fontSize: 16,
     fontWeight: "bold",
+    paddingVertical: 5,
   },
 
   contentStyle: {
@@ -165,36 +198,30 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 
-  adressStyle: {
+  activityStyle: {
     fontSize: 14,
     color: "#B59F78",
     marginTop: 5,
     flexWrap: "wrap",
-    width: "90%",
+    width: "50%",
   },
 
-  locationDiv: {
+  activityDiv: {
     flexDirection: "row",
     backgroundColor: "#D8DBBD",
     borderRadius: 10,
     marginBottom: 12,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    elevation: 1,
     alignItems: "center",
     marginTop: 10,
+    padding: 0,
   },
 
-  locationRight: {
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    marginHorizontal: 0,
-    width: "70%",
+  activityRight: {
+    width: "90%",
   },
 
-  locationIMG: {
+  activityIMG: {
     height: "100%",
     width: "25%",
     overflow: "hidden",
