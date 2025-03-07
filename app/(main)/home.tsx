@@ -42,6 +42,8 @@ export default function Page() {
       fetchLocations();
     }, []);
 
+    console.log(foodLocations);
+
   return (
     <SafeAreaProvider>
       <ScrollView
@@ -98,7 +100,7 @@ export default function Page() {
               <TouchableOpacity
                 key={index}
                 style={styles.foodCard}
-                onPress={() => router.push("details/12")}
+                onPress={() => router.push(`/(tabs)/details/${item.id}`)}
               >
                 <Image source={{ uri: item?.image }} style={styles.foodImage} />
                 <View style={styles.foodInfo}>
@@ -125,7 +127,7 @@ export default function Page() {
                   </View>
                   <View style={styles.foodBadges}>
                     <Text style={styles.foodDescription}>
-                      {item.description}
+                      {item.description.substring(0, 160) + '...'}
                     </Text>
                   </View>
                 </View>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,17 +7,22 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "../../../lib/supabase";
 
 const { width } = Dimensions.get("window");
 
 export default function FoodDetails() {
 
+  const [details,setDetails] = useState(null);
+
   const { id } = useLocalSearchParams();
-    console.log(id);
+
   const router = useRouter();
+
 
   const foodData = {
     title: "Croissant, Paris",
@@ -52,6 +57,28 @@ export default function FoodDetails() {
     ],
   };
 
+  useEffect(() => {
+
+    if(!id) return;
+
+        const fetchLocations = async () => {
+          const { data, error } = await supabase.from("destinations").select("*").eq('id', id);
+    
+          if (error) {
+            console.error("Error fetching locations:", error);
+            Alert.alert("Error", "Failed to load locations.");
+          } else {
+            setDetails(data);
+          }
+        };
+    
+        fetchLocations();
+      }, [id]);
+
+      if(!details){
+        return <Text>Loading...</Text>
+      }
+
   return (
     <ScrollView style={styles.container}>
       <TouchableOpacity
@@ -62,22 +89,22 @@ export default function FoodDetails() {
       </TouchableOpacity>
 
       <View>
-        <Image source={{ uri: foodData.image }} style={styles.foodImage} />
+        <Image source={{ uri: details[0]?.image }} style={styles.foodImage} />
         <Text style={styles.title}>{foodData.title}</Text>
         <Text style={styles.rate}>Ocena: {foodData.rate}</Text>
         <View style={styles.descriptionDiv}>
-          <Text style={styles.description}>{foodData.description}</Text>
+          <Text style={styles.description}>{details[0]?.description}</Text>
         </View>
       </View>
 
       <View>
         <Text style={styles.sectionTitle}>Gde mozete probati</Text>
 
-        {foodData.locations.map((location, index) => (
+        {details?.map((location, index) => (
           <View style={styles.locationDiv} key={index}>
             <Image
               source={{
-                uri: location.locationIMG,
+                uri: location?.image,
               }}
               style={styles.locationIMG}
             />
@@ -123,11 +150,10 @@ export default function FoodDetails() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: "#FAF6E3",
     marginBottom: 20,
   },
-  foodImage: { width: "100%", height: 200, borderRadius: 10 },
+  foodImage: { width: "100%", height: 200, borderBottomLeftRadius: 10,borderBottomRightRadius: 10 },
   title: { fontSize: 24, fontWeight: "bold", marginTop: 10 },
   description: { fontSize: 16, color: "white" },
   descriptionDiv: {
@@ -136,7 +162,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   homeButton: {
-    alignSelf: "flex-start",
+    position: 'absolute',
+    top: 0,
+    left: 10,
+    zIndex: 1,
     backgroundColor: "#fff",
     padding: 10,
     borderRadius: 50,
