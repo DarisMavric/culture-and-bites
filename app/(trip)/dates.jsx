@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabase";
 import CalendarPicker from 'react-native-calendar-picker';
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Dates() {
   const [locations, setLocations] = useState([]);
@@ -12,6 +13,8 @@ export default function Dates() {
   const [endDate, setEndDate] = useState(null);
 
   const router = useRouter();
+
+  const { session } = useAuth();
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -48,10 +51,11 @@ export default function Dates() {
     console.log("Generisan itinerar:", activities);
 
     const { data, error } = await supabase
-      .from("itineraries")
+      .from("trips")
       .insert([
         {
           activities: activities,
+          user_id: session?.user.id
         }
       ]);
 
@@ -59,6 +63,7 @@ export default function Dates() {
       console.error("Greška pri dodavanju itinerara:", error.message);
     } else {
       console.log("Itinerar uspešno dodat:", data);
+      router.replace('/whoIsGoing');
     }
   };
 
