@@ -100,7 +100,7 @@ export default function Page() {
               <TouchableOpacity
                 key={index}
                 style={styles.foodCard}
-                onPress={() => router.push(`/(tabs)/details/${item.id}`)}
+                onPress={() => router.push(`/(trip)/dates`)}
               >
                 <Image source={{ uri: item?.image }} style={styles.foodImage} />
                 <View style={styles.foodInfo}>
