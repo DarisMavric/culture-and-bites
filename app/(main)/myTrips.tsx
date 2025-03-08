@@ -11,6 +11,7 @@ import { Text, View } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { supabase } from "../../lib/supabase";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import MapView, { Marker, Polyline } from "react-native-maps";
 
 const myTrips = () => {
   const destination = {
@@ -41,6 +42,15 @@ const myTrips = () => {
         <Image style={styles.image} source={{ uri: destination.picture }} />
       </View>
 
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude: destination.latitude,
+          longitude: destination.longitude,
+          latitudeDelta: destination.latitudeDelta,
+          longitudeDelta: destination.longitudeDelta,
+        }}
+      ></MapView>
       <View style={styles.tipContainer}>
         <View style={{ alignItems: "center", flexDirection: "row" }}>
           <Entypo name="light-bulb" size={24} color="black" />
@@ -55,6 +65,11 @@ const myTrips = () => {
 const styles = StyleSheet.create({
   imageContainer: {
     backgroundColor: "#2A3663",
+  },
+  map: {
+    height: 300,
+
+    margin: 20,
   },
   tipContainer: {
     padding: 20,
