@@ -12,6 +12,7 @@
     "@expo-google-fonts/league-spartan": "^0.2.3",
     "@expo/metro-runtime": "~4.0.1",
     "@fontsource/league-spartan": "^5.1.1",
+    "@mapbox/polyline": "^1.2.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-google-signin/google-signin": "^13.2.0",
@@ -34,12 +35,13 @@
     "react-native-calendar-picker": "^8.0.5",
     "react-native-calendars": "^1.1310.0",
     "react-native-date-picker": "^5.0.10",
+    "react-native-maps": "1.18.0",
     "react-native-reanimated": "3.16.2",
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
     "react-native-web": "~0.19.13",
     "undefined": "expo-app-loading\\",
-    "react-native-maps": "1.18.0"
+    "expo-location": "~18.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
