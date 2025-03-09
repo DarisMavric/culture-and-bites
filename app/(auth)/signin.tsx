@@ -68,15 +68,9 @@ export default function SignIn() {
         />
       </View>
       <View style={styles.buttons}>
-        <TouchableOpacity>
+        <TouchableOpacity disabled={loading} onPress={() => signInWithEmail()}>
           <View style={styles.button1}>
-            <Text
-              style={styles.button1Color}
-              disabled={loading}
-              onPress={() => signInWithEmail()}
-            >
-              Sign In
-            </Text>
+            <Text style={styles.button1Color}>Sign In</Text>
           </View>
         </TouchableOpacity>
       </View>

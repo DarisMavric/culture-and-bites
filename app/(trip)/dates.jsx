@@ -5,11 +5,16 @@ import { supabase } from "../../lib/supabase";
 import CalendarPicker from 'react-native-calendar-picker';
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Dates() {
   const [locations, setLocations] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const router = useRouter();
+
+  const { session } = useAuth();
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -26,16 +31,56 @@ export default function Dates() {
     fetchLocations();
   }, []);
 
+  const dodajItenar = async () => {
+    if (!startDate || !endDate) {
+      Alert.alert("Greška", "Molimo izaberite početni i krajnji datum.");
+      return;
+    }
+
+    let activities = { days: {} };
+    let currentDate = new Date(startDate);
+    let finalDate = new Date(endDate);
+    let dayCount = 1;
+
+    while (currentDate <= finalDate) {
+      activities.days[`Day${dayCount}`] = [];
+      currentDate.setDate(currentDate.getDate() + 1);
+      dayCount++;
+    }
+
+    console.log("Generisan itinerar:", activities);
+
+    const { data, error } = await supabase
+      .from("trips")
+      .insert([
+        {
+          activities: activities,
+          user_id: session?.user.id
+        }
+      ]);
+
+    if (error) {
+      console.error("Greška pri dodavanju itinerara:", error.message);
+    } else {
+      console.log("Itinerar uspešno dodat:", data);
+      router.replace('/whoIsGoing');
+    }
+  };
+
   // Handle date range selection
-  const onDateChange = (date,type) => {
-    console.log(date,type)
+  const onDateChange = (date, type) => {
+    if (type === "START_DATE") {
+      setStartDate(date);
+    } else if (type === "END_DATE") {
+      setEndDate(date);
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <TouchableOpacity
             style={styles.homeButton}
-            onPress={() => router.push("/interests")}
+            onPress={() => router.replace('/home')}
         >
             <Ionicons name="home" color="#B59F78" size={24} />
       </TouchableOpacity>
@@ -63,7 +108,7 @@ export default function Dates() {
           }} 
         />
       </View>
-      <TouchableOpacity style={styles.nextButton} onPress={() => router.push("/whoIsGoing")}>
+      <TouchableOpacity style={styles.nextButton} onPress={() => dodajItenar()}>
           <Text style={{fontSize: 25,color: "#fff", fontFamily: "LeagueSpartan_700Bold"}}>DALJE</Text>
       </TouchableOpacity>
     </SafeAreaView>
