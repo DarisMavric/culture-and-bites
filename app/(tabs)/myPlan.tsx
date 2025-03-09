@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,54 +9,101 @@ import {
   Dimensions,
   Image,
   Button,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "../../lib/supabase";
 
 const { width } = Dimensions.get("window");
 
 export default function myPlan() {
   const router = useRouter();
+const [data, setData] = useState([]); // Početna vrednost null
+    const [days, setDays] = useState([]);
+    const [destinations, setDestinations] = useState([]); // Početna vrednost null
+  
+    useEffect(() => {
+      const fetchLocations = async () => {
+        const { data, error } = await supabase.from("trips").select("activities").eq('id', '3f89b691-f8e4-4f8b-b4f4-352855cf77d6');
+  
+        if (error) {
+          console.error("Error fetching locations:", error);
+          Alert.alert("Error", "Failed to load locations.");
+        } else if (data && data.length > 0) {
+          setData(data); // Postavi prvi objekat ako postoji
+          console.log(data);
+        }
+      };
 
-  const data = {
-    title: "Paris, France",
-    days: [
-      {
-        dayTitle: "Day 1",
-        activities: [
-          {
-            activitiTitle: "Croissant, Paris ",
-            type: "hrana",
-            activityDescription: "Kroasan ",
-            activityImage:
-              "https://s3-alpha-sig.figma.com/img/ad69/007d/c4d898e1f34d2c4e6d4c85c7871715fd?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=s~Vghb5xOCdwNJOABZPow36-UV5ppZIx~16nfyw~wHTfVM7y6GfXcmiVJQtRlrveGSLE-bDv-wtXOxIK8D9JrXP1SD96pz76Vz95UwJqoke6qEtA9LWwwk3AGgu97NoJS4N7yNPF51DbQYHDj9vMK8SG3Cij1IFv48AqDjvzc3yXA~O4ZWsHvPbc-X0MXQH7ij55v6XE-a5C0OOMQeWzM5cocggh7PmHXPRHInttcZtpH9APULyiDJ1iFFCf89yCH5iwMKcowFlEmyXH7Qo59Kvtj~D9aE7cN4OlxKF72VtvLAy4RN~ZAENB3c1vKT7U6M3y~M5srriA2Qg~qocTew__",
-          },
+      const fetchDestinations = async () => {
+        const { data, error } = await supabase.from("destinations").select("*");
+  
+        if (error) {
+          console.error("Error fetching locations:", error);
+          Alert.alert("Error", "Failed to load locations.");
+        } else if (data && data.length > 0) {
+          setDestinations(data); // Postavi prvi objekat ako postoji
+        }
+      };
+  
+      fetchLocations();
+      fetchDestinations();
+    }, []);
 
-          {
-            activitiTitle: "Boulangerie Victorie",
-            type: "restorani",
-            activityDescription: "Gineste, 12000 Rodez, France",
-            activityImage:
-              "https://images.pexels.com/photos/1047458/pexels-photo-1047458.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-          },
-        ],
-      },
+    useEffect(() => {
+        // Kada se `data` promeni, ažuriraj `days`
+        const allDays = data.flatMap((item) =>
+          item.activities?.days ? Object.entries(item.activities.days) : []
+        );
+        setDays(allDays);
+      }, [data]);
 
-      {
-        dayTitle: "Day 2",
-        activities: [
-          {
-            activitiTitle: "Ajfleov Toranj",
-            type: "lokacija",
-            activityDescription:
-              "Simbol Pariza i jedna od najposecenijih turisnickih atrakcija na svetu.",
-            activityImage:
-              "./eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png",
-          },
-        ],
-      },
-    ],
-  };
+
+      const deleteFrom = async (activityId, day) => {
+        // Fetch current data from the trips table
+        const { data, error } = await supabase.from("trips").select("activities").eq('id', '3f89b691-f8e4-4f8b-b4f4-352855cf77d6');
+      
+        if (error) {
+          console.error("Error fetching locations:", error);
+          Alert.alert("Error", "Failed to load locations.");
+        } else if (data && data.length > 0) {
+          // Get the current activities
+          const activitiesData = data[0].activities;
+      
+          // Remove the activityId from the specific day's activities
+          const updatedDays = { ...activitiesData.days };
+      
+          if (updatedDays[day]) {
+            updatedDays[day] = updatedDays[day].filter(id => id !== activityId); // Remove the activityId from the day
+          }
+      
+          // Update the activities object with the modified days
+          const updatedActivities = {
+            ...activitiesData,
+            days: updatedDays
+          };
+      
+          // Update the trips table with the modified activities
+          const { error: updateError } = await supabase
+            .from("trips")
+            .update({ activities: updatedActivities })
+            .eq('id', '3f89b691-f8e4-4f8b-b4f4-352855cf77d6');
+      
+          if (updateError) {
+            console.error("Error updating activities:", updateError);
+            Alert.alert("Error", "Failed to update activities.");
+          } else {
+            // Update the local state with the new data
+            setData([{
+              ...data[0],
+              activities: updatedActivities
+            }]);
+      
+            console.log("Activity deleted successfully.");
+          }
+        }
+      };
 
   return (
     <ScrollView style={styles.container}>
@@ -73,14 +120,14 @@ export default function myPlan() {
         </TouchableOpacity>
 
         <View style={styles.textContainer}>
-          <Text style={styles.sectionTitle}>{data.title}</Text>
+          <Text style={styles.sectionTitle}>TJT</Text>
           <Text style={styles.seciondTitle}>Travel Plan</Text>
         </View>
       </ImageBackground>
 
       <View style={{ padding: 10 }}>
-        {data.days.map((day) => (
-          <View>
+        {days.map(([day, activities], index) => (
+          <View key={index}>
             <View
               style={{
                 flexDirection: "row",
@@ -89,7 +136,7 @@ export default function myPlan() {
                 marginBottom: 5,
               }}
             >
-              <Text style={styles.dayTitle}>{day.dayTitle}</Text>
+              <Text style={styles.dayTitle}>{day}</Text>
               <TouchableOpacity
                 style={{
                   backgroundColor: "rgb(216, 219, 189)",
@@ -104,12 +151,16 @@ export default function myPlan() {
               </TouchableOpacity>
             </View>
 
-            {day.activities.map((activity, index) => (
-              <View style={styles.foodCard} key={index}>
+            {activities.map((activityId, idx) => {
+
+              const destination = destinations.find((dest) => dest.id === activityId);
+
+              return (
+              <View style={styles.foodCard} key={idx}>
                 <Image
                   source={
-                    activity.activityImage.startsWith("http")
-                      ? { uri: activity.activityImage }
+                    destination?.image.startsWith("http")
+                      ? { uri: destination?.image }
                       : require("./eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png") // Ako je lokalna
                   }
                   style={styles.foodImage}
@@ -126,7 +177,7 @@ export default function myPlan() {
                       }}
                     >
                       <Text style={styles.foodTitle}>
-                        {activity.activitiTitle}
+                        {destination?.name}
                       </Text>
 
                       <TouchableOpacity style={styles.typeStyle}>
@@ -136,7 +187,7 @@ export default function myPlan() {
                             color: "white",
                           }}
                         >
-                          {activity.type}
+                          {destination.type}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -148,7 +199,7 @@ export default function myPlan() {
                       }}
                     >
                       <Text style={styles.foodInfo}>
-                        {activity.activityDescription}
+                        {destination.description}
                       </Text>
                     </View>
                   </View>
@@ -171,7 +222,8 @@ export default function myPlan() {
                   </View>
                 </View>
               </View>
-            ))}
+              )
+          })}
           </View>
         ))}
       </View>
