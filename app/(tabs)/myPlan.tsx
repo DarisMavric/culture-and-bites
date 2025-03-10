@@ -187,7 +187,7 @@ const [data, setData] = useState([]); // Početna vrednost null
                             color: "white",
                           }}
                         >
-                          {destination.type}
+                          {destination?.type}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -199,7 +199,7 @@ const [data, setData] = useState([]); // Početna vrednost null
                       }}
                     >
                       <Text style={styles.foodInfo}>
-                        {destination.description}
+                        {destination?.description}
                       </Text>
                     </View>
                   </View>
@@ -211,9 +211,9 @@ const [data, setData] = useState([]); // Početna vrednost null
                       gap: 5,
                       padding: 5,
                       backgroundColor: "#2A3663F5",
-                    }}
-                  >
-                    <Ionicons name="trash" size={22} color={"#B59F78"} />
+                    }} 
+                   >
+                    <Ionicons name="trash" size={22} color={"#B59F78"} onPress={() => router.replace('/goToDestination')}/>
                     <Ionicons
                       name="share-social-outline"
                       size={22}
