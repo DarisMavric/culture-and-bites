@@ -1,6 +1,13 @@
 import { useRouter } from "expo-router";
 import React, { useEffect, useState, useRef } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -16,18 +23,9 @@ export default function MyTrips() {
   const [routeCoords, setRouteCoords] = useState([]);
   const [drivingDuration, setDrivingDuration] = useState(null);
   const [walkingDuration, setWalkingDuration] = useState(null);
-  const [destination,setDestination] = useState(null);
+  const [destination, setDestination] = useState(null);
   const ORS_API_KEY =
-   "5b3ce3597851110001cf62489adc68921fef4853b93a6f7af77aef4d";
-  /*const destination = {
-    latitude: 43.12884059691567,
-    longitude: 20.50539796209354,
-    name: "Golden Gate Bridge",
-    tip: "Best visited at midnight in San Francisco",
-    time: "9:30 AM - 11:00 PM",
-    image:
-      "https://imgs.search.brave.com/O1GA3ypnvpTCMNyxKm3lwK46ZD64TsK4kIC2pQyYAgw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzAxLzM2LzM5Lzk0/LzM2MF9GXzEzNjM5/OTQzMV90UllJb1Qw/eW9pa1hFS3dwdnBU/NnhCREo5cXZ4SE9K/MS5qcGc",
-  }; */
+    "5b3ce3597851110001cf62489adc68921fef4853b93a6f7af77aef4d";
 
   useEffect(() => {
     (async () => {
@@ -40,35 +38,40 @@ export default function MyTrips() {
         });
       }
     })();
-  
+
     const fetchLocations = async () => {
-        const { data, error } = await supabase
+      const { data, error } = await supabase
         .from("destinations")
         .select("*")
         .limit(1)
         .maybeSingle();
-  
+
       if (error) {
         console.error("Error fetching locations:", error);
         Alert.alert("Error", "Failed to load locations.");
       } else {
-        setDestination(data); // Postavljamo samo jednu destinaciju
+        setDestination(data);
       }
     };
-  
+
     fetchLocations();
   }, []);
-  
+
   useEffect(() => {
-    if (origin && destination?.longitude && destination?.latitude) {  
+    if (origin && destination?.longitude && destination?.latitude) {
       fetchRoute();
       fetchWalkingDuration();
     }
   }, [origin, destination]);
-  
-  
+
   useEffect(() => {
-    if (mapRef.current && routeCoords.length > 0 && origin && destination?.latitude && destination?.longitude) { // Provera da destination postoji
+    if (
+      mapRef.current &&
+      routeCoords.length > 0 &&
+      origin &&
+      destination?.latitude &&
+      destination?.longitude
+    ) {
       const coordinates = [origin, destination, ...routeCoords];
       mapRef.current.fitToCoordinates(coordinates, {
         edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
@@ -76,20 +79,26 @@ export default function MyTrips() {
       });
     }
   }, [routeCoords]);
-  
+
   async function fetchRoute() {
     try {
-      if (!origin || !destination || !destination.longitude || !destination.latitude) return;  // Osiguravamo da destination postoji
-  
+      if (
+        !origin ||
+        !destination ||
+        !destination.longitude ||
+        !destination.latitude
+      )
+        return;
+
       const bodyData = {
         coordinates: [
           [origin.longitude, origin.latitude],
-          [destination.longitude, destination.latitude], // Uklonjen ?. jer smo proverili da destination postoji
+          [destination.longitude, destination.latitude],
         ],
         geometry: true,
         instructions: false,
       };
-      
+
       const response = await fetch(
         "https://api.openrouteservice.org/v2/directions/driving-car",
         {
@@ -101,8 +110,14 @@ export default function MyTrips() {
           body: JSON.stringify(bodyData),
         }
       );
-  
+
       const json = await response.json();
+      console.log(json);
+      if (json.error) {
+        console.error("Routing error:", json.error);
+        Alert.alert("Routing error", json.error.message);
+        return;
+      }
       if (json.routes && json.routes.length > 0) {
         const encoded = json.routes[0].geometry;
         const decoded = polyline.decode(encoded);
@@ -111,18 +126,20 @@ export default function MyTrips() {
           longitude: lng,
         }));
         setRouteCoords(route);
-        const durationMinutes = Math.round(json.routes[0].summary.duration / 60);
+        const durationMinutes = Math.round(
+          json.routes[0].summary.duration / 60
+        );
         setDrivingDuration(durationMinutes);
       }
     } catch (error) {
       console.error("Greška pri dobijanju rute:", error);
     }
   }
-  
+
   async function fetchWalkingDuration() {
     try {
-      if (!origin || !destination) return;  // Provera da destination postoji
-  
+      if (!origin || !destination) return;
+
       const bodyData = {
         coordinates: [
           [origin.longitude, origin.latitude],
@@ -131,7 +148,7 @@ export default function MyTrips() {
         geometry: false,
         instructions: false,
       };
-  
+
       const response = await fetch(
         "https://api.openrouteservice.org/v2/directions/foot-walking",
         {
@@ -143,10 +160,17 @@ export default function MyTrips() {
           body: JSON.stringify(bodyData),
         }
       );
-  
+
       const json = await response.json();
+      if (json.error) {
+        console.error("Walking routing error:", json.error);
+        Alert.alert("Routing error", json.error.message);
+        return;
+      }
       if (json.routes && json.routes.length > 0) {
-        const durationMinutes = Math.round(json.routes[0].summary.duration / 60);
+        const durationMinutes = Math.round(
+          json.routes[0].summary.duration / 60
+        );
         setWalkingDuration(durationMinutes);
       }
     } catch (error) {
@@ -154,6 +178,21 @@ export default function MyTrips() {
     }
   }
   console.log(destination);
+
+  if (!destination) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#FAF6E3",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#FAF6E3" }}>
@@ -229,7 +268,9 @@ export default function MyTrips() {
           }}
         >
           <Ionicons name="time-outline" size={24} color="#2A3663" />
-          <Text style={styles.subtitle}>{destination?.time || "15 minuta"}</Text>
+          <Text style={styles.subtitle}>
+            {destination?.time || "15 minuta"}
+          </Text>
         </View>
       </View>
       <View style={styles.tipContainer}>
@@ -313,7 +354,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    // marginVertical: 10,
   },
   durationText: {
     fontFamily: "LeagueSpartan_700Bold",
