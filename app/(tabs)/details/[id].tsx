@@ -79,6 +79,8 @@ export default function FoodDetails() {
         return <Text>Loading...</Text>
       }
 
+      console.log(details);
+
   return (
     <ScrollView style={styles.container}>
       <TouchableOpacity
@@ -90,7 +92,7 @@ export default function FoodDetails() {
 
       <View>
         <Image source={{ uri: details[0]?.image }} style={styles.foodImage} />
-        <Text style={styles.title}>{foodData.title}</Text>
+        <Text style={styles.title}>{details[0].name}</Text>
         <Text style={styles.rate}>Ocena: {foodData.rate}</Text>
         <View style={styles.descriptionDiv}>
           <Text style={styles.description}>{details[0]?.description}</Text>
