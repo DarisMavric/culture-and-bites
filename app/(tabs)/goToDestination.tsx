@@ -44,9 +44,9 @@ export default function MyTrips() {
     const fetchLocations = async () => {
         const { data, error } = await supabase
         .from("destinations")
-        .select("*")
+        .select("*").eq('id', '3415eb74-77c7-4184-a7c0-aaee454cce81')
         .limit(1)
-        .maybeSingle();
+        .maybeSingle()
   
       if (error) {
         console.error("Error fetching locations:", error);
