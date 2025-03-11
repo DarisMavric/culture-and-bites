@@ -50,7 +50,7 @@ export default function Dates() {
       console.error("Greška pri dodavanju itinerara:", error.message);
     } else {
       console.log("Itinerar uspešno dodat:", data);
-      router.replace('(tabs)/tab');
+      router.replace('(tabs)/chooseCity');
       setWho('');
     }
   }

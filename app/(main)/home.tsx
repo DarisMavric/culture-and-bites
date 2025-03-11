@@ -105,7 +105,7 @@ export default function Page() {
                 <Text style={styles.description}>
                   Paris, Francuska – svetski centar umetnosti, mode i kulture.
                 </Text>
-                <TouchableOpacity style={styles.exploreButton}>
+                <TouchableOpacity style={styles.exploreButton} onPress={() => router.replace('/(trip)/chooseCity')}>
                   <Text style={styles.exploreButtonText}>EXPLORE</Text>
                 </TouchableOpacity>
               </View>
