@@ -8,7 +8,6 @@ import {
   ScrollView,
   Dimensions,
   Image,
-  Button,
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
@@ -19,91 +18,98 @@ const { width } = Dimensions.get("window");
 
 export default function myPlan() {
   const router = useRouter();
-const [data, setData] = useState([]); // Početna vrednost null
-    const [days, setDays] = useState([]);
-    const [destinations, setDestinations] = useState([]); // Početna vrednost null
-  
-    useEffect(() => {
-      const fetchLocations = async () => {
-        const { data, error } = await supabase.from("trips").select("activities").eq('id', '3f89b691-f8e4-4f8b-b4f4-352855cf77d6');
-  
-        if (error) {
-          console.error("Error fetching locations:", error);
-          Alert.alert("Error", "Failed to load locations.");
-        } else if (data && data.length > 0) {
-          setData(data); // Postavi prvi objekat ako postoji
-          console.log(data);
-        }
+  const [data, setData] = useState([]); // Početna vrednost null
+  const [days, setDays] = useState([]);
+  const [destinations, setDestinations] = useState([]); // Početna vrednost null
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      const { data, error } = await supabase
+        .from("trips")
+        .select("activities")
+        .eq("id", "3f89b691-f8e4-4f8b-b4f4-352855cf77d6");
+
+      if (error) {
+        console.error("Error fetching locations:", error);
+        Alert.alert("Error", "Failed to load locations.");
+      } else if (data && data.length > 0) {
+        setData(data); // Postavi prvi objekat ako postoji
+        console.log(data);
+      }
+    };
+
+    const fetchDestinations = async () => {
+      const { data, error } = await supabase.from("destinations").select("*");
+
+      if (error) {
+        console.error("Error fetching locations:", error);
+        Alert.alert("Error", "Failed to load locations.");
+      } else if (data && data.length > 0) {
+        setDestinations(data); // Postavi prvi objekat ako postoji
+      }
+    };
+
+    fetchLocations();
+    fetchDestinations();
+  }, []);
+
+  useEffect(() => {
+    // Kada se `data` promeni, ažuriraj `days`
+    const allDays = data.flatMap((item) =>
+      item.activities?.days ? Object.entries(item.activities.days) : []
+    );
+    setDays(allDays);
+  }, [data]);
+
+  const deleteFrom = async (activityId, day) => {
+    // Fetch current data from the trips table
+    const { data, error } = await supabase
+      .from("trips")
+      .select("activities")
+      .eq("id", "3f89b691-f8e4-4f8b-b4f4-352855cf77d6");
+
+    if (error) {
+      console.error("Error fetching locations:", error);
+      Alert.alert("Error", "Failed to load locations.");
+    } else if (data && data.length > 0) {
+      // Get the current activities
+      const activitiesData = data[0].activities;
+
+      // Remove the activityId from the specific day's activities
+      const updatedDays = { ...activitiesData.days };
+
+      if (updatedDays[day]) {
+        updatedDays[day] = updatedDays[day].filter((id) => id !== activityId); // Remove the activityId from the day
+      }
+
+      // Update the activities object with the modified days
+      const updatedActivities = {
+        ...activitiesData,
+        days: updatedDays,
       };
 
-      const fetchDestinations = async () => {
-        const { data, error } = await supabase.from("destinations").select("*");
-  
-        if (error) {
-          console.error("Error fetching locations:", error);
-          Alert.alert("Error", "Failed to load locations.");
-        } else if (data && data.length > 0) {
-          setDestinations(data); // Postavi prvi objekat ako postoji
-        }
-      };
-  
-      fetchLocations();
-      fetchDestinations();
-    }, []);
+      // Update the trips table with the modified activities
+      const { error: updateError } = await supabase
+        .from("trips")
+        .update({ activities: updatedActivities })
+        .eq("id", "3f89b691-f8e4-4f8b-b4f4-352855cf77d6");
 
-    useEffect(() => {
-        // Kada se `data` promeni, ažuriraj `days`
-        const allDays = data.flatMap((item) =>
-          item.activities?.days ? Object.entries(item.activities.days) : []
-        );
-        setDays(allDays);
-      }, [data]);
+      if (updateError) {
+        console.error("Error updating activities:", updateError);
+        Alert.alert("Error", "Failed to update activities.");
+      } else {
+        // Update the local state with the new data
+        setData([
+          {
+            ...data[0],
+            activities: updatedActivities,
+          },
+        ]);
 
-
-      const deleteFrom = async (activityId, day) => {
-        // Fetch current data from the trips table
-        const { data, error } = await supabase.from("trips").select("activities").eq('id', '3f89b691-f8e4-4f8b-b4f4-352855cf77d6');
-      
-        if (error) {
-          console.error("Error fetching locations:", error);
-          Alert.alert("Error", "Failed to load locations.");
-        } else if (data && data.length > 0) {
-          // Get the current activities
-          const activitiesData = data[0].activities;
-      
-          // Remove the activityId from the specific day's activities
-          const updatedDays = { ...activitiesData.days };
-      
-          if (updatedDays[day]) {
-            updatedDays[day] = updatedDays[day].filter(id => id !== activityId); // Remove the activityId from the day
-          }
-      
-          // Update the activities object with the modified days
-          const updatedActivities = {
-            ...activitiesData,
-            days: updatedDays
-          };
-      
-          // Update the trips table with the modified activities
-          const { error: updateError } = await supabase
-            .from("trips")
-            .update({ activities: updatedActivities })
-            .eq('id', '3f89b691-f8e4-4f8b-b4f4-352855cf77d6');
-      
-          if (updateError) {
-            console.error("Error updating activities:", updateError);
-            Alert.alert("Error", "Failed to update activities.");
-          } else {
-            // Update the local state with the new data
-            setData([{
-              ...data[0],
-              activities: updatedActivities
-            }]);
-      
-            console.log("Activity deleted successfully.");
-          }
-        }
-      };
+        console.log("Activity deleted successfully.");
+      }
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -114,9 +120,9 @@ const [data, setData] = useState([]); // Početna vrednost null
       >
         <TouchableOpacity
           style={styles.homeButton}
-          onPress={() => router.push("/home")}
+          onPress={() => router.push("/myTrips")}
         >
-          <Ionicons name="home" color="#B59F78" size={30} />
+          <Ionicons name="arrow-back-outline" color="#B59F78" size={30} />
         </TouchableOpacity>
 
         <View style={styles.textContainer}>
@@ -152,78 +158,84 @@ const [data, setData] = useState([]); // Početna vrednost null
             </View>
 
             {activities.map((activityId, idx) => {
-
-              const destination = destinations.find((dest) => dest.id === activityId);
+              const destination = destinations.find(
+                (dest) => dest.id === activityId
+              );
 
               return (
-              <View style={styles.foodCard} key={idx}>
-                <Image
-                  source={
-                    destination?.image.startsWith("http")
-                      ? { uri: destination?.image }
-                      : require("./eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png") // Ako je lokalna
-                  }
-                  style={styles.foodImage}
-                />
+                <View style={styles.foodCard} key={idx}>
+                  <Image
+                    source={
+                      destination?.image.startsWith("http")
+                        ? { uri: destination?.image }
+                        : require("./eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png") // Ako je lokalna
+                    }
+                    style={styles.foodImage}
+                  />
 
-                <View style={{ flexDirection: "column", width: "100%" }}>
-                  <View>
-                    <View
-                      style={{
-                        padding: 5,
-                        flexDirection: "row",
-                        gap: 3,
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.foodTitle}>
-                        {destination?.name}
-                      </Text>
-
-                      <TouchableOpacity style={styles.typeStyle}>
-                        <Text
-                          style={{
-                            fontSize: 12,
-                            color: "white",
-                          }}
-                        >
-                          {destination?.type}
+                  <View style={{ flexDirection: "column", width: "100%" }}>
+                    <View>
+                      <View
+                        style={{
+                          padding: 5,
+                          flexDirection: "row",
+                          gap: 3,
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.foodTitle}>
+                          {destination?.name}
                         </Text>
-                      </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.typeStyle}>
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              color: "white",
+                            }}
+                          >
+                            {destination?.type}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+
+                      <View
+                        style={{
+                          backgroundColor: "#2A3663F5",
+                          padding: 3,
+                        }}
+                      >
+                        <Text style={styles.foodInfo}>
+                          {destination?.description}
+                        </Text>
+                      </View>
                     </View>
 
                     <View
                       style={{
+                        flexDirection: "row",
+                        paddingBottom: 10,
+                        gap: 5,
+                        padding: 5,
                         backgroundColor: "#2A3663F5",
-                        padding: 3,
                       }}
                     >
-                      <Text style={styles.foodInfo}>
-                        {destination?.description}
-                      </Text>
+                      <Ionicons
+                        name="trash"
+                        size={22}
+                        color={"#B59F78"}
+                        onPress={() => router.replace("/goToDestination")}
+                      />
+                      <Ionicons
+                        name="share-social-outline"
+                        size={22}
+                        color={"#B59F78"}
+                      />
                     </View>
-                  </View>
-
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      paddingBottom: 10,
-                      gap: 5,
-                      padding: 5,
-                      backgroundColor: "#2A3663F5",
-                    }} 
-                   >
-                    <Ionicons name="trash" size={22} color={"#B59F78"} onPress={() => router.replace('/goToDestination')}/>
-                    <Ionicons
-                      name="share-social-outline"
-                      size={22}
-                      color={"#B59F78"}
-                    />
                   </View>
                 </View>
-              </View>
-              )
-          })}
+              );
+            })}
           </View>
         ))}
       </View>
