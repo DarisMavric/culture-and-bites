@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { useAuth } from "../../context/AuthContext";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -10,34 +10,119 @@ import { Ionicons } from "@expo/vector-icons";
 export default function Page() {
 
     const [locations, setLocations] = useState([]);
-      const [startDate, setStartDate] = useState(null);
-      const [endDate, setEndDate] = useState(null);
+    const [hotels,setHotels] = useState([]);
+    const [cityID,setCityID] = useState(null);
 
-      const [selected,setSelected] = useState(null);
+      const [selected,setSelected] = useState([]);
     
       const router = useRouter();
+
+      const { text } = useLocalSearchParams();
     
       const { session } = useAuth();
+
+
+      const fetchHotels = async (cityId, travelerType) => {
+        const url = `https://booking-com.p.rapidapi.com/v1/hotels/search?city_id=${cityId}&checkin_date=2025-03-12&checkout_date=2025-03-15&adults_number=${travelerType === "Solo Putnik" ? 1 : 2}&order_by=price`;
     
-      useEffect(() => {
-        const fetchLocations = async () => {
-          const { data, error } = await supabase.from("cities").select("*");
-    
-          if (error) {
-            console.error("Error fetching locations:", error);
-            Alert.alert("Error", "Failed to load locations.");
-          } else {
-            setLocations(data);
-          }
+        const options = {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Key': 'TVOJ_API_KLJUČ', // Zameni sa svojim API ključem
+                'X-RapidAPI-Host': 'booking-com.p.rapidapi.com'
+            }
         };
     
-        fetchLocations();
+        try {
+            const response = await fetch(url, options);
+            const result = await response.json();
+            console.log(`Hotels for ${travelerType}:`, result.hotels);
+            return result.hotels;
+        } catch (error) {
+            console.error('Error fetching hotels:', error);
+        }
+    };
+    
+    
+      useEffect(() => {
+
+        if(text){
+          const fetchLocations = async () => {
+            const { data, error } = await supabase.from("cities").select("*");
+      
+            if (error) {
+              console.error("Error fetching locations:", error);
+              Alert.alert("Error", "Failed to load locations.");
+            } else {
+              setLocations(data);
+            }
+          };
+
+          const fetchCityId = async () => {
+            const url = `https://booking-com15.p.rapidapi.com/api/v1/hotels/searchDestination?query=${text}&search_type='city'`;
+        
+            const options = {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-key': '9bd1eb820fmshb976f37434a1e56p17caf7jsn538d2e59e36c', // Zameni sa svojim API ključem
+                    'x-rapidapi-host': 'booking-com15.p.rapidapi.com'
+                }
+            };
+        
+            try {
+                const response = await fetch(url, options);
+                const result = await response.json();
+                    if (result) {
+                    setCityID(result.data[0].dest_id);
+                    console.log(result.data[0].dest_id);
+                } else {
+                    console.log("City not found");
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error fetching city ID:', error);
+            }
+        };
+
+      
+        
+        // Poziv funkcije
+        fetchLocations(); 
+        fetchCityId(); 
+  
+
+        }
       }, []);
 
+      useEffect(() => {
+        const fetchHotels = async () => {
+          if(cityID){
+            const url = `https://booking-com15.p.rapidapi.com/api/v1/hotels/searchHotels?dest_id=${cityID}&search_type=city&arrival_date=2025-03-13&departure_date=2025-03-15`;
 
-      const dodajGrad = async() => {
-        console.log(selected);
-        router.replace(`/chooseHotel?text=${selected}`);
+            const options = {
+                method: 'GET',
+                headers: {
+                    'X-RapidAPI-Key': '9bd1eb820fmshb976f37434a1e56p17caf7jsn538d2e59e36c', // Zameni sa svojim API ključem
+                    'X-RapidAPI-Host': 'booking-com15.p.rapidapi.com'
+                }
+            };
+        
+            try {
+                const response = await fetch(url, options);
+                const result = await response.json();
+                console.log(`Hotels for You:`, result.data.hotels);
+                return result.hotels;
+            } catch (error) {
+                console.error('Error fetching hotels:', error);
+            } 
+          }
+      }; 
+        fetchHotels();
+      },[cityID])
+
+
+      const dodajHotel = async() => {
+        router.replace('/chooseHotel');
       }
 
 
@@ -90,7 +175,7 @@ export default function Page() {
                         <Text style={styles.description}>
                           {location?.description.substring(0,50) + '...'}
                         </Text>
-                        <TouchableOpacity style={selected?.includes(location?.name) ? styles.exploreSelectedButton : styles.exploreButton} onPress={() => setSelected(location?.name)}>
+                        <TouchableOpacity style={selected.includes(location?.name) ? styles.exploreSelectedButton : styles.exploreButton} onPress={() => setSelected(location?.name)}>
                           <Text style={styles.exploreButtonText}>ODABRERI</Text>
                         </TouchableOpacity>
                       </View>
@@ -98,7 +183,7 @@ export default function Page() {
                   </View>
                 )} )}
               
-              <TouchableOpacity style={styles.nextButton} onPress={() => dodajGrad()}>
+              <TouchableOpacity style={styles.nextButton} onPress={() => dodajHotel()}>
                   <Text style={{fontSize: 25,color: "#fff", fontFamily: "LeagueSpartan_700Bold"}}>DALJE</Text>
               </TouchableOpacity>
 
