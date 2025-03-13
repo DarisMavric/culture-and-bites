@@ -7,6 +7,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Modal,
+  TextInput,
+  ScrollView,
 } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -15,6 +18,7 @@ import MapView, { Marker, Polyline } from "react-native-maps";
 import polyline from "@mapbox/polyline";
 import * as Location from "expo-location";
 import { supabase } from "../../lib/supabase";
+import EvilIcons from "@expo/vector-icons/EvilIcons";
 
 export default function MyTrips() {
   const router = useRouter();
@@ -24,6 +28,9 @@ export default function MyTrips() {
   const [drivingDuration, setDrivingDuration] = useState(null);
   const [walkingDuration, setWalkingDuration] = useState(null);
   const [destination, setDestination] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [noteContent, setNoteContent] = useState("");
+  const [notes, setNotes] = useState([]);
   const ORS_API_KEY =
     "5b3ce3597851110001cf62489adc68921fef4853b93a6f7af77aef4d";
 
@@ -42,10 +49,11 @@ export default function MyTrips() {
     const fetchLocations = async () => {
       const { data, error } = await supabase
         .from("destinations")
-        .select("*").eq('id', '3415eb74-77c7-4184-a7c0-aaee454cce81')
+        .select("*")
+        .eq("id", "3415eb74-77c7-4184-a7c0-aaee454cce81")
         .limit(1)
         .maybeSingle();
-  
+
       if (error) {
         console.error("Error fetching locations:", error);
         Alert.alert("Error", "Failed to load locations.");
@@ -79,6 +87,10 @@ export default function MyTrips() {
       });
     }
   }, [routeCoords]);
+
+  useEffect(() => {
+    fetchNotes();
+  }, []);
 
   async function fetchRoute() {
     try {
@@ -114,7 +126,7 @@ export default function MyTrips() {
       const json = await response.json();
       console.log(json);
       if (json.error) {
-        console.error("Routing error:", json.error);
+        console.error("Routing error:", json.error, "OVDE");
         Alert.alert("Routing error", json.error.message);
         return;
       }
@@ -177,8 +189,47 @@ export default function MyTrips() {
       console.error("Greška pri dobijanju pešačkog vremena:", error);
     }
   }
+
+  async function fetchNotes() {
+    const { data, error } = await supabase
+      .from("notes")
+      .select("*")
+      .order("id", { ascending: false });
+    if (error) {
+      console.error("Error fetching notes:", error);
+    } else {
+      setNotes(data);
+    }
+  }
+
+  async function handleAddNote() {
+    if (!noteContent.trim()) {
+      Alert.alert("Error", "Please enter note content");
+      return;
+    }
+    const { data, error } = await supabase
+      .from("notes")
+      .insert({ content: noteContent });
+    if (error) {
+      Alert.alert("Error", "Failed to add note");
+      console.log(error);
+    } else {
+      fetchNotes();
+    }
+    setModalVisible(false);
+    setNoteContent("");
+  }
+
   console.log(destination);
 
+  async function handleDeleteNote(id) {
+    const { data, error } = await supabase.from("notes").delete().eq("id", id);
+    if (error) {
+      Alert.alert("Error", "Failed to delete note");
+    } else {
+      fetchNotes();
+    }
+  }
   if (!destination) {
     return (
       <View
@@ -195,7 +246,7 @@ export default function MyTrips() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#FAF6E3" }}>
+    <ScrollView style={{ flex: 1, backgroundColor: "#FAF6E3" }}>
       <TouchableOpacity
         style={styles.homeButton}
         onPress={() => router.push("/home")}
@@ -273,6 +324,43 @@ export default function MyTrips() {
           </Text>
         </View>
       </View>
+      <View style={styles.notesContainer}>
+        <View style={styles.addNotes}>
+          <Text
+            style={{
+              fontWeight: "700",
+              fontSize: 16,
+              alignSelf: "center",
+            }}
+          >
+            BELESKE
+          </Text>
+          <TouchableOpacity
+            style={styles.addNote}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text
+              style={{
+                fontWeight: "700",
+                fontSize: 12,
+              }}
+            >
+              Dodaj Belesku
+            </Text>
+            <AntDesign name="pluscircleo" size={20} color="black" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.notesList}>
+          {notes.map((note) => (
+            <View key={note.id} style={styles.noteItem}>
+              <Text style={styles.noteText}>{note.content}</Text>
+              <TouchableOpacity onPress={() => handleDeleteNote(note.id)}>
+                <EvilIcons name="trash" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      </View>
       <View style={styles.tipContainer}>
         <View style={styles.tipRow}>
           <Entypo name="light-bulb" size={24} color="#2A3663" />
@@ -280,7 +368,27 @@ export default function MyTrips() {
         </View>
         <Text style={styles.tipText}>{destination?.tip}</Text>
       </View>
-    </View>
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <TextInput
+              style={styles.modalTextInput}
+              placeholder="Unesite belesku"
+              placeholderTextColor="#777"
+              multiline={true}
+              value={noteContent}
+              onChangeText={setNoteContent}
+            />
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={handleAddNote}
+            >
+              <Text style={styles.modalButtonText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 }
 
@@ -297,6 +405,48 @@ const styles = StyleSheet.create({
     margin: 20,
     width: "90%",
     alignSelf: "center",
+  },
+  notesContainer: {
+    flexDirection: "column",
+    marginVertical: 20,
+    alignSelf: "center",
+  },
+  addNotes: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "90%",
+    alignSelf: "center",
+  },
+  addNote: {
+    paddingVertical: 4,
+    paddingLeft: 9,
+    backgroundColor: "#D8DBBD",
+    borderRadius: 10,
+    maxHeight: 40,
+    elevation: 3,
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
+    width: 140,
+  },
+  notesList: {
+    marginTop: 10,
+  },
+  noteItem: {
+    padding: 15,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "#D8DBBD",
+    borderRadius: 10,
+    marginTop: 20,
+    width: "95%",
+    alignSelf: "center",
+  },
+  noteText: {
+    color: "#444444",
+    fontFamily: "LeagueSpartan_700Bold",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   mapContainer: {
     backgroundColor: "#D8DBBD",
@@ -359,6 +509,41 @@ const styles = StyleSheet.create({
     fontFamily: "LeagueSpartan_700Bold",
     fontWeight: "700",
     color: "#2A3663",
+    fontSize: 16,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalView: {
+    width: "80%",
+    backgroundColor: "#FAF6E3",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+    elevation: 5,
+  },
+  modalTextInput: {
+    width: "100%",
+    height: 100,
+    backgroundColor: "#D8DBBD",
+    borderRadius: 10,
+    padding: 10,
+    textAlignVertical: "top",
+    marginBottom: 20,
+    color: "#444444",
+  },
+  modalButton: {
+    backgroundColor: "#D8DBBD",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+  },
+  modalButtonText: {
+    color: "#444444",
+    fontWeight: "700",
     fontSize: 16,
   },
 });
