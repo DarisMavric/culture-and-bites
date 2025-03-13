@@ -8,22 +8,37 @@ import {
   ScrollView,
   Dimensions,
   Alert,
+  TextInput,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../../lib/supabase";
+import StarRating from "../../../components/StarRating";
 
 const { width } = Dimensions.get("window");
 
 export default function FoodDetails() {
-
-  const [details,setDetails] = useState(null);
-
+  const [details, setDetails] = useState(null);
+  const [rating, setRating] = useState(0);
+  const [reviewContent, setReviewContent] = useState();
+  const [reviews, setReviews] = useState([]);
+  const [userId, setUserId] = useState(null);
   const { id } = useLocalSearchParams();
-
   const router = useRouter();
 
-
+  const getUser = async () => {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+    if (error) {
+      console.error("Error getting user:", error);
+    } else {
+      const userId = user ? user.id : null;
+      setUserId(userId);
+      console.log("User ID:", userId);
+    }
+  };
   const foodData = {
     title: "Croissant, Paris",
     description:
@@ -31,55 +46,77 @@ export default function FoodDetails() {
     image:
       "https://s3-alpha-sig.figma.com/img/ad69/007d/c4d898e1f34d2c4e6d4c85c7871715fd?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=s~Vghb5xOCdwNJOABZPow36-UV5ppZIx~16nfyw~wHTfVM7y6GfXcmiVJQtRlrveGSLE-bDv-wtXOxIK8D9JrXP1SD96pz76Vz95UwJqoke6qEtA9LWwwk3AGgu97NoJS4N7yNPF51DbQYHDj9vMK8SG3Cij1IFv48AqDjvzc3yXA~O4ZWsHvPbc-X0MXQH7ij55v6XE-a5C0OOMQeWzM5cocggh7PmHXPRHInttcZtpH9APULyiDJ1iFFCf89yCH5iwMKcowFlEmyXH7Qo59Kvtj~D9aE7cN4OlxKF72VtvLAy4RN~ZAENB3c1vKT7U6M3y~M5srriA2Qg~qocTew__",
     rate: 5,
-    comments: [
-      {
-        userIMG:
-          "https://images.pexels.com/photos/30873846/pexels-photo-30873846/free-photo-of-black-and-white-portrait-of-a-young-man.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-        userNAME: "Neko Nekic",
-        commentContent: "Odlicno!!!",
-        rate: 5,
-      },
-      {
-        userIMG:
-          "https://images.pexels.com/photos/15670747/pexels-photo-15670747/free-photo-of-man-wearing-suit-holding-hands-in-pockets.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-        userNAME: "Branko Lazic",
-        commentContent: "Okeej :/",
-        rate: 3,
-      },
-    ],
-    locations: [
-      {
-        locationIMG:
-          "https://images.pexels.com/photos/1047458/pexels-photo-1047458.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-        locationName: "Boulangerie Victorie",
-        locationAdress: "32 Av. de la Gineste, 120000 Redez, France",
-      },
-    ],
   };
 
+  const handleRatingChange = (rating) => {
+    setRating(rating);
+  };
   useEffect(() => {
-
-    if(!id) return;
-
-        const fetchLocations = async () => {
-          const { data, error } = await supabase.from("destinations").select("*").eq('id', id);
-    
-          if (error) {
-            console.error("Error fetching locations:", error);
-            Alert.alert("Error", "Failed to load locations.");
-          } else {
-            setDetails(data);
-          }
-        };
-    
-        fetchLocations();
-      }, [id]);
-
-      if(!details){
-        return <Text>Loading...</Text>
+    getUser();
+  }, []);
+  useEffect(() => {
+    if (!id) return;
+    const fetchLocations = async () => {
+      const { data, error } = await supabase
+        .from("destinations")
+        .select("*")
+        .eq("id", id);
+      if (error) {
+        console.error("Error fetching locations:", error);
+        Alert.alert("Error", "Failed to load locations.");
+      } else {
+        setDetails(data);
       }
+    };
+    fetchLocations();
+  }, [id]);
 
-      console.log(details);
+  useEffect(() => {
+    if (id) {
+      fetchReviews();
+    }
+  }, [id]);
+
+  async function fetchReviews() {
+    const { data, error } = await supabase
+      .from("reviews")
+      .select("*, users(name)")
+      .eq("destination_id", id)
+      .order("id", { ascending: false });
+    if (error) {
+      console.error("Error fetching reviews:", error);
+    } else {
+      console.log(data);
+      setReviews(data);
+    }
+  }
+
+  async function handlePublishReview() {
+    if (rating === 0) {
+      Alert.alert("Error", "Rating is required");
+      return;
+    }
+
+    const { data, error } = await supabase.from("reviews").insert({
+      rating: rating,
+      comment: reviewContent,
+      destination_id: id,
+      user_id: userId,
+    });
+    if (error) {
+      Alert.alert("Error", "Failed to submit review");
+      console.log(error);
+    } else {
+      Alert.alert("Success", "Review submitted successfully");
+      setReviewContent("");
+      setRating(0);
+      fetchReviews();
+    }
+  }
+
+  if (!details) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -89,19 +126,32 @@ export default function FoodDetails() {
       >
         <Ionicons name="home" color="#B59F78" size={24} />
       </TouchableOpacity>
-
       <View>
         <Image source={{ uri: details[0]?.image }} style={styles.foodImage} />
-        <Text style={styles.title}>{details[0].name}</Text>
-        <Text style={styles.rate}>Ocena: {foodData.rate}</Text>
+      </View>
+      <View style={styles.informationDiv}>
+        <View style={styles.place}>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={styles.title}>
+              {details[0].name}
+              {", "}
+            </Text>
+            <Text style={[styles.title, { color: "#B59F78" }]}>
+              {details[0].city}
+            </Text>
+          </View>
+          <StarRating
+            initialRating={foodData.rate}
+            totalStars={5}
+            isEditable={false}
+          />
+        </View>
         <View style={styles.descriptionDiv}>
           <Text style={styles.description}>{details[0]?.description}</Text>
         </View>
       </View>
-
       <View>
         <Text style={styles.sectionTitle}>Gde mozete probati</Text>
-
         {details?.map((location, index) => (
           <View style={styles.locationDiv} key={index}>
             <Image
@@ -117,29 +167,63 @@ export default function FoodDetails() {
           </View>
         ))}
       </View>
-
+      <View style={{ width: "95%", alignItems: "center", alignSelf: "center" }}>
+        <Text
+          style={[
+            styles.sectionTitle,
+            { alignSelf: "flex-start", marginTop: 10, marginLeft: 0 },
+          ]}
+        >
+          Oceni ovaj proizvod
+        </Text>
+        <Text style={styles.reviewText}>Podelite vase misljenje s drugima</Text>
+        <StarRating
+          initialRating={0}
+          totalStars={5}
+          isEditable={true}
+          onRatingChange={handleRatingChange}
+          size={25}
+          margin={60}
+        />
+        <TextInput
+          style={styles.modalTextInput}
+          placeholder="Opisite svoje iskustvo (nije obavezno)"
+          placeholderTextColor="#777"
+          multiline={true}
+          value={reviewContent}
+          onChangeText={setReviewContent}
+        />
+        <TouchableOpacity
+          style={styles.reviewButton}
+          onPress={handlePublishReview}
+        >
+          <Text style={styles.reviewButtonText}>Objavi</Text>
+        </TouchableOpacity>
+      </View>
       <View style={{ marginBottom: 50 }}>
         <Text style={styles.sectionTitle}>Utisci o proizvodu</Text>
-
         <View>
-          {foodData.comments.map((comment, index) => (
-            <View style={styles.commentDiv} key={index}>
+          {reviews.map((review) => (
+            <View key={review.id} style={styles.commentDiv}>
               <View>
                 <Image
                   source={{
-                    uri: comment.userIMG,
+                    uri: "https://via.placeholder.com/60",
                   }}
                   style={styles.userIMGStyle}
                 />
               </View>
-
               <View style={styles.rightStyle}>
                 <View style={styles.upStyle}>
-                  <Text style={styles.userNameStyle}>{comment.userNAME}</Text>
+                  <Text style={styles.userNameStyle}>{review.users?.name}</Text>
+                  <StarRating
+                    initialRating={review.rating}
+                    totalStars={5}
+                    isEditable={false}
+                    size={15}
+                  />
                 </View>
-                <Text style={styles.contentStyle}>
-                  {comment.commentContent}
-                </Text>
+                <Text style={styles.contentStyle}>{review.comment}</Text>
               </View>
             </View>
           ))}
@@ -155,20 +239,32 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAF6E3",
     marginBottom: 20,
   },
-  foodImage: { width: "100%", height: 200, borderBottomLeftRadius: 10,borderBottomRightRadius: 10 },
-  title: { fontSize: 24, fontWeight: "bold", marginTop: 10 },
-  description: { fontSize: 16, color: "white" },
+  foodImage: {
+    width: "100%",
+    height: 200,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  title: { fontSize: 24, fontWeight: "bold" },
+  description: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#B59F78",
+  },
   descriptionDiv: {
     backgroundColor: "#2A3663F5",
+    marginVertical: 15,
     padding: 10,
+    alignSelf: "center",
+    width: "100%",
     borderRadius: 10,
   },
   homeButton: {
-    position: 'absolute',
-    top: 0,
+    position: "absolute",
+    top: 5,
     left: 10,
     zIndex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#D8DBBD",
     padding: 10,
     borderRadius: 50,
     marginBottom: 20,
@@ -180,46 +276,66 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#2A3663F5",
     marginTop: 10,
+    marginLeft: 10,
   },
-
+  reviewText: {
+    alignSelf: "flex-start",
+    marginBottom: 20,
+    color: "#777",
+  },
+  place: {
+    flexDirection: "row",
+    marginTop: 10,
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   userIMGStyle: {
     height: 60,
     width: 60,
     borderRadius: 30,
   },
-
   commentDiv: {
     backgroundColor: "#D8DBBD",
     marginTop: 10,
     flexDirection: "row",
+    alignSelf: "center",
     alignItems: "center",
-    width: "100%",
+    width: "95%",
     borderRadius: 15,
     padding: 10,
   },
-
   upStyle: {
     flexDirection: "row",
+    width: "90%",
     justifyContent: "space-between",
     alignItems: "center",
   },
-
   rightStyle: {
     padding: 10,
   },
-
+  reviewButton: {
+    backgroundColor: "#D8DBBD",
+    width: width * 0.3,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+  },
+  reviewButtonText: {
+    color: "#2A3663",
+    letterSpacing: 1,
+    alignSelf: "center",
+    fontSize: 14,
+  },
   userNameStyle: {
     color: "#2A3663F5",
     fontSize: 16,
     fontWeight: "bold",
   },
-
   contentStyle: {
     color: "#B59F78",
     fontSize: 16,
     marginTop: 5,
   },
-
   adressStyle: {
     fontSize: 14,
     color: "#B59F78",
@@ -227,7 +343,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     width: "90%",
   },
-
   locationIMG: {
     height: "100%",
     width: "25%",
@@ -235,10 +350,21 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 10,
   },
-
+  modalTextInput: {
+    width: "100%",
+    margin: 20,
+    marginBottom: 10,
+    backgroundColor: "#D8DBBD",
+    borderRadius: 5,
+    padding: 15,
+    textAlignVertical: "top",
+    color: "#777",
+  },
   locationDiv: {
     flexDirection: "row",
     backgroundColor: "#D8DBBD",
+    alignSelf: "center",
+    width: "95%",
     borderRadius: 10,
     marginBottom: 12,
     overflow: "hidden",
@@ -249,11 +375,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
   },
-
   locationRight: {
     paddingVertical: 10,
     paddingHorizontal: 10,
     marginHorizontal: 0,
     width: "70%",
+  },
+  informationDiv: {
+    width: "95%",
+    alignSelf: "center",
   },
 });
