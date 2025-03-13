@@ -18,7 +18,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 export default function Page() {
   const router = useRouter();
   const { session } = useAuth();
-  const [destinations, setDestinations] = useState([])
+  const [destinations, setDestinations] = useState([]);
   const [preferences, setPreferences] = useState([]);
 
   async function signOut() {
@@ -41,7 +41,10 @@ export default function Page() {
     };
 
     const fetchUserPreferences = async () => {
-      const { data, error } = await supabase.from("users").select("preferences").eq('id', session?.user.id);
+      const { data, error } = await supabase
+        .from("users")
+        .select("preferences")
+        .eq("id", session?.user.id);
 
       if (error) {
         console.error("Error fetching locations:", error);
@@ -50,7 +53,6 @@ export default function Page() {
         setPreferences(data[0].preferences);
       }
     };
-
 
     fetchUserPreferences();
     fetchLocations();
@@ -77,7 +79,7 @@ export default function Page() {
               <FontAwesome name="user" size={30} color="black" />
             </TouchableOpacity>
           </View>
-  
+
           <View style={styles.searchContainer}>
             <TextInput
               placeholder="Istraži Destinacije..."
@@ -85,7 +87,7 @@ export default function Page() {
               placeholderTextColor="#444"
             />
           </View>
-  
+
           <Text style={styles.sectionTitle}>Preporučeno</Text>
           <View style={styles.recommendedCard}>
             <Image
@@ -105,20 +107,23 @@ export default function Page() {
                 <Text style={styles.description}>
                   Paris, Francuska – svetski centar umetnosti, mode i kulture.
                 </Text>
-                <TouchableOpacity style={styles.exploreButton} onPress={() => router.replace('/(trip)/chooseActivities')}>
+                <TouchableOpacity
+                  style={styles.exploreButton}
+                  onPress={() => router.replace("/(trip)/chooseActivities")}
+                >
                   <Text style={styles.exploreButtonText}>EXPLORE</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
-  
+
           <View style={styles.foodContainer}>
             {destinations.map((item, index) => {
               // Filter based on preferences
 
               console.log(item);
               if (!preferences.includes(item.type)) return null;
-  
+
               // Dynamically display category titles
               const categoryTitle = (() => {
                 switch (item.category) {
@@ -132,32 +137,43 @@ export default function Page() {
                     return item.category; // Return the category as is if no case matches
                 }
               })();
-  
+
               return (
                 <View key={index}>
                   {/* Display category title */}
-                  {categoryTitle && <Text style={styles.sectionTitle}>{categoryTitle}</Text>}
-  
+                  {categoryTitle && (
+                    <Text style={styles.sectionTitle}>{categoryTitle}</Text>
+                  )}
+
                   <TouchableOpacity
                     style={styles.foodCard}
                     onPress={() => router.push(`/(tabs)/details/${item?.id}`)}
                   >
-                    <Image source={{ uri: item?.image }} style={styles.foodImage} />
+                    <Image
+                      source={{ uri: item?.image }}
+                      style={styles.foodImage}
+                    />
                     <View style={styles.foodInfo}>
                       <View style={styles.foodName}>
                         <View style={{ flexDirection: "row" }}>
                           <Text style={styles.foodTitle}>{item?.name}, </Text>
-                          <Text style={[styles.foodTitle, { color: "#B59F78" }]}>
+                          <Text
+                            style={[styles.foodTitle, { color: "#B59F78" }]}
+                          >
                             {item?.city}
                           </Text>
                         </View>
-  
+
                         <TouchableOpacity style={styles.badgeButton}>
-                          <Text style={styles.badgeButtonText}>{item.type}</Text>
+                          <Text style={styles.badgeButtonText}>
+                            {item.type}
+                          </Text>
                         </TouchableOpacity>
                         {item?.isPopular && (
                           <TouchableOpacity style={styles.popularButton}>
-                            <Text style={styles.popularButtonText}>POPULAR</Text>
+                            <Text style={styles.popularButtonText}>
+                              POPULAR
+                            </Text>
                           </TouchableOpacity>
                         )}
                       </View>
@@ -172,11 +188,10 @@ export default function Page() {
               );
             })}
           </View>
-  
         </View>
       </ScrollView>
     </SafeAreaProvider>
-  );  
+  );
 }
 
 const styles = StyleSheet.create({
