@@ -44,7 +44,7 @@ export default function Page() {
       const { data, error } = await supabase
         .from("users")
         .select("preferences")
-        .eq("id", session?.user.id);
+        .eq("id", session?.user?.id);
 
       if (error) {
         console.error("Error fetching locations:", error);
@@ -72,7 +72,7 @@ export default function Page() {
             <Text style={styles.greeting}>
               Zdravo,{" "}
               <Text style={styles.highlight}>
-                {session.user.user_metadata.name}e
+                {session?.user.user_metadata.name}
               </Text>
             </Text>
             <TouchableOpacity onPress={signOut}>

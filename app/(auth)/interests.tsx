@@ -19,9 +19,13 @@ export default function Page() {
     LeagueSpartan_700Bold,
   });
 
+  const foodTypes = ["Kafici i poslasticarnice", "Restorani", "Ulicna Hrana", "Tematski restorani"];
+  const cultureTypes = ["Muzeji i galerije", "Istorijske znamenitosti", "Umetnost i arhitektura", "Religijske lokacije", "Tematske ture"];
+  const activityTypes = ["Avanturističke aktivnosti", "Noćni život", "Wellness i spa", "Porodicne aktivnosti", "Sezonski dogadjaji"];
+
   const [selectedButtons, setSelectedButtons] = useState([]);
   const [locations, setLocations] = useState([]);
-  const [foodPreferences,setFoodPreferences] = useState([]);
+  const [foodPreferences, setFoodPreferences] = useState([]);
 
   const router = useRouter();
 
@@ -42,28 +46,28 @@ export default function Page() {
     fetchLocations();
   }, []);
 
-  const nextButton = async() => {
-        const { data, error } = await supabase.from("users").update({preferences: foodPreferences}).eq('email', session?.user.email);
-    
-          if (error) {
-            console.error("Error fetching locations:", error);
-            Alert.alert("Error", "Failed to load locations.");
-          } else {
-            router.replace('/dates')
-      }
+  const nextButton = async () => {
+    const { data, error } = await supabase.from("users").update({ preferences: foodPreferences }).eq('email', session?.user.email);
+
+    if (error) {
+      console.error("Error fetching locations:", error);
+      Alert.alert("Error", "Failed to load locations.");
+    } else {
+      router.replace('/home')
+    }
   }
 
   const isSelected = (option) => foodPreferences.includes(option);
   console.log(locations[0]?.name);
 
   const selected = (value) => {
-     setFoodPreferences((prevSelected) => {
-      if(prevSelected.includes(value)) {
+    setFoodPreferences((prevSelected) => {
+      if (prevSelected.includes(value)) {
         return prevSelected.filter((item) => item !== value)
       } else {
         return [...prevSelected, value]
       }
-     })
+    })
   }
 
   if (!fontsLoaded) {
@@ -73,12 +77,6 @@ export default function Page() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.imageContainer}>
-        <TouchableOpacity
-                    style={styles.homeButton}
-                    onPress={() => router.push("/home")}
-                >
-                    <Ionicons name="home" color="#B59F78" size={24} />
-              </TouchableOpacity>
         <Image
           source={{
             uri: locations[0]?.cityImage,
@@ -86,30 +84,63 @@ export default function Page() {
           style={styles.image}
           resizeMode="cover"
         />
-        <Text style={styles.imageText}>Paris</Text>
+        <Text style={styles.imageText}>Unesite Vasa Interesovanja</Text>
       </View>
       <View style={{ padding: 10 }}>
-        <View>
-          <Text style={styles.title}>Hrana i Restorani</Text>
-        </View>
-        <View style={{flexDirection: "row", flexWrap: "wrap"}}>
-          <TouchableOpacity
-            style={[styles.button, isSelected('Kafici') && styles.pressedButton]}
-            onPress={() => selected('Kafici')}
-          >
-            <Text style={styles.pick}>Kafici i Poslasticarnice</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, isSelected('Restorani') && styles.pressedButton]}
-            onPress={() => selected('Restorani')}
-          >
-            <Text style={styles.pick}>Restorani</Text>
-          </TouchableOpacity>
+        <View style={{ marginTop: 5 }}>
+          <Text style={styles.title}>🍽 Hrana i Restorani</Text>
         </View>
 
+        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+          {foodTypes.map((item, index) => {
+            return (
+              <TouchableOpacity
+                style={[styles.button, isSelected(item) && styles.pressedButton]}
+                onPress={() => selected(item)}
+                key={index}
+              >
+                <Text style={styles.pick}>{item}</Text>
+              </TouchableOpacity>
+            )
+          })}
+        </View>
+        <View style={{ marginTop: 10 }}>
+          <Text style={styles.title}>🏛 Kultura i znamenitosti</Text>
+        </View>
+
+        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+          {cultureTypes.map((item, index) => {
+            return (
+              <TouchableOpacity
+                style={[styles.button, isSelected(item) && styles.pressedButton]}
+                onPress={() => selected(item)}
+                key={index}
+              >
+                <Text style={styles.pick}>{item}</Text>
+              </TouchableOpacity>
+            )
+          })}
+        </View>
+        <View style={{ marginTop: 10 }}>
+          <Text style={styles.title}>🎭 Aktivnosti i doživljaji</Text>
+        </View>
+
+        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+          {activityTypes.map((item, index) => {
+            return (
+              <TouchableOpacity
+                style={[styles.button, isSelected(item) && styles.pressedButton]}
+                onPress={() => selected(item)}
+                key={index}
+              >
+                <Text style={styles.pick}>{item}</Text>
+              </TouchableOpacity>
+            )
+          })}
+        </View>
       </View>
       <TouchableOpacity style={styles.nextButton} onPress={() => nextButton()}>
-        <Text style={{fontSize: 25,color: "#fff", fontFamily: "LeagueSpartan_700Bold"}}>DALJE</Text>
+        <Text style={{ fontSize: 25, color: "#fff", fontFamily: "LeagueSpartan_700Bold" }}>DALJE</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -148,7 +179,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     elevation: 5,
   },
-  title: { fontSize: 30, color: "#2A3663",fontFamily: "LeagueSpartan_700Bold",marginBottom: 5,},
+  title: { fontSize: 30, color: "#2A3663", fontFamily: "LeagueSpartan_700Bold", marginBottom: 5, },
   button: {
     paddingTop: 5,
     paddingBottom: 5,
