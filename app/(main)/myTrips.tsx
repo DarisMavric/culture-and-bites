@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ImageBackground,
   Alert,
-  Image,
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";

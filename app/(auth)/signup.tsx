@@ -1,22 +1,25 @@
-import { Alert, Button, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import "@fontsource/league-spartan";
+import {
+  Alert,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  View,
+  StyleSheet,
+} from "react-native";
 import { supabase } from "../../lib/supabase";
-import React, { useState } from 'react'
-import { Link, useRouter } from "expo-router";
-
+import React, { useState } from "react";
+import { useRouter } from "expo-router";
 
 export default function SignIn() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
-  const [loading, setLoading] = useState(false)
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
   async function signUpWithEmail() {
-    setLoading(true)
+    setLoading(true);
     const {
       data: { session },
       error,
@@ -26,120 +29,149 @@ export default function SignIn() {
       options: {
         data: {
           name,
-          email
+          email,
         },
       },
-    })
+    });
 
-    if(session){
-      router.push('/home');
+    if (session) {
+      router.push("/home");
     }
 
-    if(error) Alert.alert(error.message)
-    setLoading(false)
+    if (error) Alert.alert(error.message);
+    setLoading(false);
   }
 
   return (
-    <View>
-      <Image style={styles.ImageStyle} source={require("./test.webp")} />
+    <View style={styles.container}>
       <View style={styles.welcome}>
-        <Text style={styles.WelcomeText}>Welcome To Culture & Bites</Text>
-        <Text style={styles.WelcomeTextUnder}>
-          Ulogujte se ili kreirajte novi nalog
-        </Text>
+        <Text style={styles.WelcomeText}>Dobro došli!</Text>
       </View>
+
+      <Text style={styles.WelcomeTextUnder}>
+        Molimo vas da popunite sledeća polja kako biste kreirali nalog.
+      </Text>
       <View style={styles.inputSection}>
-        <Text style={styles.inputLabel}>Name:</Text>
         <TextInput
           style={styles.input}
-          onChangeText={(text) => setName(text)}
+          onChangeText={setName}
           value={name}
-          placeholder="Enter Your Name"
-          placeholderTextColor="#D8DBBD" 
+          placeholder="Ime"
+          placeholderTextColor="#D8DBBD"
         />
-        <Text style={styles.inputLabel}>Email:</Text>
         <TextInput
           style={styles.input}
           value={email}
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={setEmail}
           placeholder="Email"
-          placeholderTextColor="#D8DBBD" 
+          placeholderTextColor="#D8DBBD"
+          keyboardType="email-address"
         />
-        <Text style={styles.inputLabel}>Password:</Text>
         <TextInput
           style={styles.input}
-          onChangeText={(text) => setPassword(text)}
+          onChangeText={setPassword}
           value={password}
-          placeholder="Password"
-          placeholderTextColor="#D8DBBD" 
+          placeholder="Lozinka"
+          placeholderTextColor="#D8DBBD"
+          secureTextEntry
         />
       </View>
-      <Text><Link href="/signin">Already Have An Account</Link></Text>
+
       <View style={styles.buttons}>
-        <TouchableOpacity>
-            <View style={styles.button1}>
-                <Text style={styles.button1Color} disabled={loading} onPress={() => signUpWithEmail()}>Sign Up</Text>
-            </View>
+        <TouchableOpacity
+          style={styles.button1}
+          disabled={loading}
+          onPress={signUpWithEmail}
+        >
+          <Text style={styles.button1Color}>Registruj se</Text>
         </TouchableOpacity>
+        <Text style={styles.link}>
+          Već imate nalog?{" "}
+          <Text
+            style={styles.loginButton}
+            onPress={() => router.push("/(auth)/signin")}
+          >
+            Prijavi se
+          </Text>
+        </Text>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  welcome: {
-    padding: 10,
+  container: {
+    flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    paddingHorizontal: 20,
+    backgroundColor: "#FAF6E3",
   },
-  ImageStyle: {
-    width: "100%",
-    height: "40%",
+
+  welcome: {
+    alignItems: "flex-start",
+    marginBottom: 20,
   },
+
   WelcomeText: {
     fontWeight: "bold",
     color: "#2A3663",
     fontSize: 25,
+    textAlign: "center",
   },
+
   WelcomeTextUnder: {
-    fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 16,
     color: "#B59F78",
+    textAlign: "left",
+    maxWidth: 300,
   },
-  inputLabel: {
-    fontSize: 20
-  },
+
   inputSection: {
-    fontSize: 30,
-    padding: 25,
+    width: "100%",
+    maxWidth: 350,
   },
+
   input: {
-    padding: 10,
-    marginTop: 5,
-    height: 45,
-    backgroundColor: "#B59F78",
+    width: "100%",
+    padding: 15,
+    marginTop: 10,
+    backgroundColor: "transparent",
     borderRadius: 10,
+    borderColor: "#D8DBBD",
+    borderWidth: 1,
+    color: "#2A3663",
   },
+
   buttons: {
-    shadowColor: "0",
-    paddingLeft: 25,
-    paddingRight: 25,
+    marginTop: 20,
+    alignItems: "center",
+    width: "100%",
+    maxWidth: 350,
   },
+
   button1: {
-    color: "white",
     backgroundColor: "#2A3663",
     justifyContent: "center",
     alignItems: "center",
     height: 45,
     borderRadius: 10,
+    width: "100%",
   },
+
   button1Color: {
     color: "white",
     fontSize: 20,
   },
-  googleAuth: {
-    height:45,
-    backgroundColor: "#444",
-    color: "white"
-  }
+
+  link: {
+    marginTop: 10,
+    color: "#B59F78",
+    fontSize: 14,
+    textAlign: "center",
+  },
+
+  loginButton: {
+    color: "rgb(29,50,92)",
+    fontSize: 16,
+  },
 });
