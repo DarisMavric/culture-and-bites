@@ -122,8 +122,13 @@ export default function Page() {
 
 
       const dodajHotel = async() => {
-        router.replace('/chooseHotel');
+        router.replace('/chooseActivities');
       }
+
+      const preskoci = async() => {
+        router.replace(`/chooseActivities`);
+      }
+
 
 
     return (
@@ -182,6 +187,10 @@ export default function Page() {
                     </View>
                   </View>
                 )} )}
+
+              <TouchableOpacity style={styles.nextButton} onPress={() => preskoci()}>
+                  <Text style={{fontSize: 25,color: "#fff", fontFamily: "LeagueSpartan_700Bold"}}>Preskoci</Text>
+              </TouchableOpacity>
               
               <TouchableOpacity style={styles.nextButton} onPress={() => dodajHotel()}>
                   <Text style={{fontSize: 25,color: "#fff", fontFamily: "LeagueSpartan_700Bold"}}>DALJE</Text>
