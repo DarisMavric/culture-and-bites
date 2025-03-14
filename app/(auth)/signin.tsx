@@ -32,7 +32,7 @@ export default function SignIn() {
     });
 
     if (session) {
-      router.push("/home");
+      router.push("/interests");
     }
 
     if (error) Alert.alert(error.message);
@@ -40,29 +40,26 @@ export default function SignIn() {
   }
 
   return (
-    <View style={{ height: "100%" }}>
-      <Image style={styles.ImageStyle} source={require("./test.webp")} />
+    <View style={styles.container}>
       <View style={styles.welcome}>
-        <Text style={styles.WelcomeText}>Welcome To Culture & Bites</Text>
-        <Text style={styles.WelcomeTextUnder}>
-          Ulogujte se ili kreirajte novi nalog
-        </Text>
+        <Text style={styles.WelcomeText}>Dobro došli nazad!</Text>
       </View>
+      <Text style={styles.WelcomeTextUnder}>
+        Molimo Vas prijavite se da biste nastavili.
+      </Text>
       <View style={styles.inputSection}>
-        <Text style={styles.inputLabel}>Email</Text>
         <TextInput
           style={styles.input}
           value={email}
           onChangeText={(text) => setEmail(text)}
-          placeholder="Email"
+          placeholder="E-mail"
           placeholderTextColor="#D8DBBD"
         />
-        <Text style={styles.inputLabel}>Password</Text>
         <TextInput
           style={styles.input}
           onChangeText={(text) => setPassword(text)}
           value={password}
-          placeholder="Password"
+          placeholder="Lozinka"
           placeholderTextColor="#D8DBBD"
           secureTextEntry={true}
         />
@@ -70,7 +67,7 @@ export default function SignIn() {
       <View style={styles.buttons}>
         <TouchableOpacity disabled={loading} onPress={() => signInWithEmail()}>
           <View style={styles.button1}>
-            <Text style={styles.button1Color}>Sign In</Text>
+            <Text style={styles.button1Color}>Prijavi se</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -84,67 +81,96 @@ export default function SignIn() {
           fontWeight: "bold",
         }}
       >
-        <Link href="/signup">Create New Account</Link>
+        <Text style={styles.link}>
+          Nemate kreiran nalog?{" "}
+          <Text
+            style={styles.loginButton}
+            onPress={() => router.push("/(auth)/signup")}
+          >
+            Kreiraj nalog
+          </Text>
+        </Text>
       </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  welcome: {
-    padding: 10,
+  container: {
+    flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    paddingHorizontal: 20,
+    backgroundColor: "#FAF6E3",
   },
-  ImageStyle: {
-    width: "100%",
-    height: "40%",
+
+  welcome: {
+    alignItems: "flex-start",
+    marginBottom: 20,
   },
+
   WelcomeText: {
     fontWeight: "bold",
     color: "#2A3663",
-    fontSize: 25,
+    fontSize: 28,
+    textAlign: "center",
   },
+
   WelcomeTextUnder: {
-    fontWeight: "bold",
     fontSize: 18,
     color: "#B59F78",
+    textAlign: "left",
+    maxWidth: 300,
   },
-  inputLabel: {
-    fontSize: 18,
-  },
+
   inputSection: {
-    fontSize: 30,
-    padding: 25,
+    width: "100%",
+    maxWidth: 350,
   },
+
   input: {
-    padding: 10,
-    marginTop: 5,
-    height: 45,
-    backgroundColor: "#B59F78",
+    width: "100%",
+    padding: 15,
+    marginTop: 10,
+    backgroundColor: "transparent",
     borderRadius: 10,
-    color: "#D8DBBD",
+    borderColor: "#D8DBBD",
+    borderWidth: 1,
+    color: "#2A3663",
   },
+
   buttons: {
-    shadowColor: "0",
-    paddingLeft: 25,
-    paddingRight: 25,
+    marginTop: 20,
+    alignItems: "center",
+    width: "100%",
+    maxWidth: 350,
   },
+
   button1: {
-    color: "white",
     backgroundColor: "#2A3663",
     justifyContent: "center",
     alignItems: "center",
-    height: 45,
-    borderRadius: 10,
+    borderRadius: 12,
+    width: "100%",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginBottom: 10,
   },
+
   button1Color: {
     color: "white",
-    fontSize: 20,
+    fontSize: 22,
   },
-  googleAuth: {
-    height: 45,
-    backgroundColor: "#444",
-    color: "white",
+
+  link: {
+    marginTop: 20,
+    color: "#B59F78",
+    fontSize: 14,
+    textAlign: "center",
+    fontWeight: "500",
+  },
+
+  loginButton: {
+    color: "rgb(29,50,92)",
+    fontSize: 16,
   },
 });

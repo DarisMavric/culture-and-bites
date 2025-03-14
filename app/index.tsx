@@ -7,10 +7,10 @@ export default function Page() {
   const { session } = useAuth();
   const router = useRouter();
 
-  if(!session){
-    return <Redirect href={'/signin'}/>
+  if (!session) {
+    return <Redirect href={"/getstarted"} />;
   } else {
-    return <Redirect href={'/home'}/>
+    return <Redirect href={"/home"} />;
   }
 
   return (

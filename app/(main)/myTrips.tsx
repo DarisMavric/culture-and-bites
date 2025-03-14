@@ -6,19 +6,22 @@ import {
   TouchableOpacity,
   ImageBackground,
   Alert,
-  Image,
   ScrollView,
+  Button,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../context/AuthContext";
 
 const myTrips = () => {
   const [trips, setTrips] = useState([]);
   const router = useRouter();
 
+  const { session } = useAuth();
+
   useEffect(() => {
     const getTrips = async () => {
-      const { data, error } = await supabase.from("trips").select("*");
+      const { data, error } = await supabase.from("trips").select("*").eq('user_id', session?.user.id);
 
       if (error) {
         console.error("Error fetching locations:", error);
@@ -96,7 +99,7 @@ const myTrips = () => {
                         style={{
                           fontSize: 22,
                           fontWeight: "bold",
-                          color: "#ffffff",
+                          color: "#fff",
                         }}
                       >
                         {trip.title}
@@ -104,6 +107,8 @@ const myTrips = () => {
                     </View>
                   </ImageBackground>
                 </View>
+
+                <Button title="Kreiraj Novo Putovanje" onPress={() => router.replace('(trip)/dates')}></Button>
 
                 <View
                   style={{
@@ -171,7 +176,7 @@ const myTrips = () => {
                           paddingVertical: 5,
                           borderBottomRightRadius: 10,
                         }}
-                        onPress={() => router.push("(tabs)/myPlan")}
+                        onPress={() => router.push(`/(tabs)/myplan/${trip?.id}`)}
                       >
                         <Text style={{ color: "#B59F78" }}>See The Plan</Text>
                       </TouchableOpacity>

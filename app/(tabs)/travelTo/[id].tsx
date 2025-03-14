@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState, useRef } from "react";
 import {
   View,
@@ -17,8 +17,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import polyline from "@mapbox/polyline";
 import * as Location from "expo-location";
-import { supabase } from "../../lib/supabase";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
+import { supabase } from "../../../lib/supabase";
 
 export default function MyTrips() {
   const router = useRouter();
@@ -31,10 +31,16 @@ export default function MyTrips() {
   const [modalVisible, setModalVisible] = useState(false);
   const [noteContent, setNoteContent] = useState("");
   const [notes, setNotes] = useState([]);
+
+
+  const {id} = useLocalSearchParams();
+
   const ORS_API_KEY =
     "5b3ce3597851110001cf62489adc68921fef4853b93a6f7af77aef4d";
 
   useEffect(() => {
+
+    if(!id) return null;
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
@@ -50,7 +56,7 @@ export default function MyTrips() {
       const { data, error } = await supabase
         .from("destinations")
         .select("*")
-        .eq("id", "3415eb74-77c7-4184-a7c0-aaee454cce81")
+        .eq("id", id)
         .limit(1)
         .maybeSingle();
 
@@ -63,14 +69,14 @@ export default function MyTrips() {
     };
 
     fetchLocations();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
-    if (origin && destination?.longitude && destination?.latitude) {
+    if (origin && destination?.longitude && destination?.latitude && id) {
       fetchRoute();
       fetchWalkingDuration();
     }
-  }, [origin, destination]);
+  }, [origin, destination,id]);
 
   useEffect(() => {
     if (
@@ -78,7 +84,8 @@ export default function MyTrips() {
       routeCoords.length > 0 &&
       origin &&
       destination?.latitude &&
-      destination?.longitude
+      destination?.longitude &&
+      id
     ) {
       const coordinates = [origin, destination, ...routeCoords];
       mapRef.current.fitToCoordinates(coordinates, {

@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../../../lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useAuth } from "../../context/AuthContext";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function Dates() {
   const [locations, setLocations] = useState([]);
@@ -19,6 +19,12 @@ export default function Dates() {
   const { session } = useAuth();
 
   const [who,setWho] = useState('');
+
+  const {id} = useLocalSearchParams();
+
+  if(id) {
+    console.log(id);
+  }
 
   const router = useRouter();
 
@@ -38,20 +44,24 @@ export default function Dates() {
   }, []);
 
   const nextButton = async() => {
-    const { data, error } = await supabase
+    if(id){
+
+      console.log("Who Is Going Trip Id: ", id);
+      const { data, error } = await supabase
       .from("trips")
       .update([
         {
           type: who,
         }
-      ]).eq('user_id', session?.user.id)
+      ]).eq('id', id)
 
     if (error) {
       console.error("Greška pri dodavanju itinerara:", error.message);
     } else {
       console.log("Itinerar uspešno dodat:", data);
-      router.replace('(tabs)/chooseCity');
+      router.replace(`(trip)/chooseCity/${id}`);
       setWho('');
+    } 
     }
   }
 
@@ -79,14 +89,14 @@ export default function Dates() {
         <Text style={styles.imageText}>Ko Putuje?</Text>
       </View>
       <View style={styles.pick}>
-        <TouchableOpacity style={styles.button} onPress={() => setWho('Solo Trip')}>
+        <TouchableOpacity style={[styles.button, who === 'Solo Trip' && { backgroundColor: '#2A3663' }]}  onPress={() => setWho('Solo Trip')}>
           <View>
             <Text style={{color: "#444", fontSize: 20,fontFamily: "LeagueSpartan_700Bold"}}>SOLO PUTNIK</Text>
             <Text style={{flex: 1, flexWrap: 'wrap', color: "#444", fontFamily: "LeagueSpartan_700Bold",justifyContent: "center"}}>Idealno za one koji putuju sami</Text>
           </View>
             <Text style={{fontSize: 40}}>🤵</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => setWho('Romance Trip')}>
+        <TouchableOpacity style={[styles.button, who === 'Momak i Devojka' && { backgroundColor: '#2A3663' }]}  onPress={() => setWho('Momak i Devojka')}>
           <View style={{width: '80%',flexShrink: 1,flex: 1}}>
             <Text style={{color: "#444", fontSize: 20,fontFamily: "LeagueSpartan_700Bold"}}>Momak i devojka</Text>
             <Text style={{flex: 1,color: "#444", fontFamily: "LeagueSpartan_700Bold"}}>Savršeno za romantična putovanja.</Text>
@@ -95,7 +105,7 @@ export default function Dates() {
             <Text style={{fontSize: 40,textAlign: "center"}}>👫</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => setWho('Family Trip')}>
+        <TouchableOpacity style={[styles.button, who === 'Family Trip' && { backgroundColor: '#2A3663' }]}  onPress={() => setWho('Family Trip')}>
           <View style={{width: '80%',flexShrink: 1,flex: 1}}>
             <Text style={{color: "#444", fontSize: 20,fontFamily: "LeagueSpartan_700Bold"}}>Cela porodica</Text>
             <Text style={{flex: 1,color: "#444", fontFamily: "LeagueSpartan_700Bold"}}>Fokus na dečijim atrakcijama, porodičnim restoranima i sigurnim destinacijama</Text>
@@ -104,7 +114,7 @@ export default function Dates() {
             <Text style={{fontSize: 40,textAlign: "center"}}>👨‍👩‍👧‍👦</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => setWho('Friends Trip')}>
+        <TouchableOpacity style={[styles.button, who === 'Friends Trip' && { backgroundColor: '#2A3663' }]} onPress={() => setWho('Friends Trip')}>
           <View style={{width: '80%',flexShrink: 1,flex: 1}}>
             <Text style={{color: "#444", fontSize: 20,fontFamily: "LeagueSpartan_700Bold"}}>Grupa prijatelja</Text>
             <Text style={{flex: 1,color: "#444", fontFamily: "LeagueSpartan_700Bold"}}>Preporuke uključuju zabavne aktivnosti, noćni život i smeštaj pogodan za grupe.</Text>

@@ -1,133 +1,68 @@
 import { useEffect, useState } from "react";
 import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
-import { useAuth } from "../../context/AuthContext";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { supabase } from "../../lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../../../context/AuthContext";
+import { supabase } from "../../../lib/supabase";
 
 
 
 export default function Page() {
 
-    const [data,setData] = useState(null);
     const [locations, setLocations] = useState([]);
-    const [hotels,setHotels] = useState([]);
-    const [cityID,setCityID] = useState(null);
+      const [startDate, setStartDate] = useState(null);
+      const [endDate, setEndDate] = useState(null);
 
-      const [selected,setSelected] = useState([]);
+      const [selected,setSelected] = useState(null);
+
+      const {id} = useLocalSearchParams();
     
       const router = useRouter();
-
-      const { id,text } = useLocalSearchParams();
     
       const { session } = useAuth();
-
+    
       useEffect(() => {
-        if(id) {
-          const fetchTrip = async() => {
-            const { data, error } = await supabase
-                .from("trips")
-                .select('*')
-                .eq('id', id)
-          
-              if (error) {
-                console.error("Greška:", error.message);
-              } else {
-                setData(data)
-                 console.log(data);
-              }
+        const fetchLocations = async () => {
+          const { data, error } = await supabase.from("cities").select("*");
+    
+          if (error) {
+            console.error("Error fetching locations:", error);
+            Alert.alert("Error", "Failed to load locations.");
+          } else {
+            setLocations(data);
           }
-
-          fetchTrip();
-        }
-      },[id])
-    
-    
-      useEffect(() => {
-
-        if(text && data){
-          const fetchLocations = async () => {
-            const { data, error } = await supabase.from("cities").select("*");
-      
-            if (error) {
-              console.error("Error fetching locations:", error);
-              Alert.alert("Error", "Failed to load locations.");
-            } else {
-              setLocations(data);
-            }
-          };
-
-          const fetchCityId = async () => {
-            const url = `https://booking-com15.p.rapidapi.com/api/v1/hotels/searchDestination?query=${text}&search_type='city'`;
-        
-            const options = {
-                method: 'GET',
-                headers: {
-                    'x-rapidapi-key': '9bd1eb820fmshb976f37434a1e56p17caf7jsn538d2e59e36c', // Zameni sa svojim API ključem
-                    'x-rapidapi-host': 'booking-com15.p.rapidapi.com'
-                }
-            };
-        
-            try {
-                const response = await fetch(url, options);
-                const result = await response.json();
-                    if (result) {
-                    setCityID(result.data[0].dest_id);
-                    console.log(result.data[0].dest_id);
-                } else {
-                    console.log("City not found");
-                    return null;
-                }
-            } catch (error) {
-                console.error('Error fetching city ID:', error);
-            }
         };
+    
+        fetchLocations();
+      }, []);
 
-      
+
+      const dodajGrad = async() => {
+        if (id) {
+            console.log("Who Is Going Trip Id: ", id);
         
-        // Poziv funkcije
-        fetchLocations(); 
-        fetchCityId(); 
-  
-
-        }
-      }, [text,data]);
-
-      useEffect(() => {
-        const fetchHotels = async () => {
-          if(cityID){
-            const url = `https://booking-com15.p.rapidapi.com/api/v1/hotels/searchHotels?dest_id=${cityID}&search_type=city&arrival_date=2025-03-13&departure_date=2025-03-15`;
-
-            const options = {
-                method: 'GET',
-                headers: {
-                    'X-RapidAPI-Key': '9bd1eb820fmshb976f37434a1e56p17caf7jsn538d2e59e36c', // Zameni sa svojim API ključem
-                    'X-RapidAPI-Host': 'booking-com15.p.rapidapi.com'
-                }
-            };
+            // Update the trip with the new city image and title
+            const { data, error } = await supabase
+              .from("trips")
+              .update([
+                {
+                  photo_url: selected?.cityImage,
+                  title: selected?.name + ',' + selected?.country,
+                },
+              ])
+              .eq('id', id)
         
-            try {
-                const response = await fetch(url, options);
-                const result = await response.json();
-                console.log(`Hotels for You:`, result.data.hotels);
-                return result.hotels;
-            } catch (error) {
-                console.error('Error fetching hotels:', error);
-            } 
+            if (error) {
+              console.error("Greška pri update:", error.message);
+            } else {
+
+                router.replace(`(trip)/chooseHotel?id=${id}&text=${selected?.name}`)
+        
+              // Clear selected city
+              setSelected(null);
+            }
           }
-      }; 
-        fetchHotels();
-      },[cityID])
-
-
-      const dodajHotel = async() => {
-        console.log('aha');
       }
-
-      const preskoci = async() => {
-        router.replace(`/home`);
-      }
-
 
 
     return (
@@ -179,19 +114,15 @@ export default function Page() {
                         <Text style={styles.description}>
                           {location?.description.substring(0,50) + '...'}
                         </Text>
-                        <TouchableOpacity style={selected.includes(location?.name) ? styles.exploreSelectedButton : styles.exploreButton} onPress={() => setSelected(location?.name)}>
+                        <TouchableOpacity style={selected?.name.includes(location?.name) ? styles.exploreSelectedButton : styles.exploreButton} onPress={() => setSelected(location)}>
                           <Text style={styles.exploreButtonText}>ODABRERI</Text>
                         </TouchableOpacity>
                       </View>
                     </View>
                   </View>
                 )} )}
-
-              <TouchableOpacity style={styles.nextButton} onPress={() => preskoci()}>
-                  <Text style={{fontSize: 25,color: "#fff", fontFamily: "LeagueSpartan_700Bold"}}>Preskoci</Text>
-              </TouchableOpacity>
               
-              <TouchableOpacity style={styles.nextButton} onPress={() => dodajHotel()}>
+              <TouchableOpacity style={styles.nextButton} onPress={() => dodajGrad()}>
                   <Text style={{fontSize: 25,color: "#fff", fontFamily: "LeagueSpartan_700Bold"}}>DALJE</Text>
               </TouchableOpacity>
 
