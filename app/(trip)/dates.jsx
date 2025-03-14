@@ -50,20 +50,36 @@ export default function Dates() {
 
     console.log("Generisan itinerar:", activities);
 
-    const { data, error } = await supabase
-      .from("trips")
-      .insert([
-        {
-          activities: activities,
-          user_id: session?.user.id
-        }
-      ]);
-
-    if (error) {
-      console.error("Greška pri dodavanju itinerara:", error.message);
-    } else {
+    try {
+      const { data, error } = await supabase
+        .from("trips")
+        .insert([
+          {
+            start_date: startDate,
+            end_date: endDate,
+            activities: activities,
+            user_id: session?.user.id,
+          }
+        ]).select();
+  
+      if (error) {
+        throw new Error(error.message); // Throw error for handling
+      }
+  
       console.log("Itinerar uspešno dodat:", data);
-      router.replace('/whoIsGoing');
+  
+      // Navigate to the newly created trip
+      if (data && Array.isArray(data) && data.length > 0) {
+        console.log("Itinerar podaci:", data[0]);
+  
+        router.replace(`(trip)/whoIsGoing/${data[0].id}`)
+      } else {
+        console.error("Greška: Nema ID-a u podacima.");
+        Alert.alert("Greška", "Došlo je do greške prilikom kreiranja itinerara.");
+      }
+    } catch (err) {
+      console.error("Greška pri dodavanju itinerara:", err.message);
+      Alert.alert("Greška", `Došlo je do greške: ${err.message}`);
     }
   };
 

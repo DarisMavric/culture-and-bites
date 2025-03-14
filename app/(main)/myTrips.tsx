@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Alert,
   ScrollView,
+  Button,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../lib/supabase";
@@ -106,6 +107,8 @@ const myTrips = () => {
                     </View>
                   </ImageBackground>
                 </View>
+
+                <Button title="Kreiraj Novo Putovanje" onPress={() => router.replace('(trip)/dates')}></Button>
 
                 <View
                   style={{
