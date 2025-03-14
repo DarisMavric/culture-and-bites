@@ -21,7 +21,10 @@ const myTrips = () => {
 
   useEffect(() => {
     const getTrips = async () => {
-      const { data, error } = await supabase.from("trips").select("*").eq('user_id', session?.user.id);
+      const { data, error } = await supabase
+        .from("trips")
+        .select("*")
+        .eq("user_id", session?.user.id);
 
       if (error) {
         console.error("Error fetching locations:", error);
@@ -108,7 +111,10 @@ const myTrips = () => {
                   </ImageBackground>
                 </View>
 
-                <Button title="Kreiraj Novo Putovanje" onPress={() => router.replace('(trip)/dates')}></Button>
+                <Button
+                  title="Kreiraj Novo Putovanje"
+                  onPress={() => router.replace("(trip)/dates")}
+                ></Button>
 
                 <View
                   style={{
@@ -176,7 +182,9 @@ const myTrips = () => {
                           paddingVertical: 5,
                           borderBottomRightRadius: 10,
                         }}
-                        onPress={() => router.push(`/(tabs)/myplan/${trip?.id}`)}
+                        onPress={() =>
+                          router.push(`/(tabs)/myplan/${trip?.id}`)
+                        }
                       >
                         <Text style={{ color: "#B59F78" }}>See The Plan</Text>
                       </TouchableOpacity>

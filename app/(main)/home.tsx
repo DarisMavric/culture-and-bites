@@ -15,6 +15,7 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+
 export default function Page() {
   const router = useRouter();
   const { session } = useAuth();
@@ -125,11 +126,11 @@ export default function Page() {
               // Filter based on preferences
 
               console.log(item);
-              if (item.category !== 'FOOD' && !preferences.includes(item.type)) return null;
+              if (item.category !== "FOOD" && !preferences?.includes(item.type))
+                return null;
 
               return (
                 <View key={index}>
-
                   <TouchableOpacity
                     style={styles.foodCard}
                     onPress={() => router.push(`/(tabs)/details/${item?.id}`)}
