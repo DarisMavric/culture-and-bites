@@ -43,6 +43,19 @@ export default function Page() {
       }
     };
 
+    const fetchUser = async () => {
+      const { data, error } = await supabase.from('users').select('preferences').eq('id', session?.user.id);
+
+      if (error) {
+        console.error('Error fetching user:', );
+      } else {
+        if(data.length > 0){
+          router.replace('/home')
+        }
+      }
+    };
+
+    fetchUser();
     fetchLocations();
   }, []);
 

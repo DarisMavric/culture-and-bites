@@ -118,32 +118,17 @@ export default function Page() {
           </View>
 
           <View style={styles.foodContainer}>
+            <View>
+              <Text style={styles.sectionTitle}>🥐 HRANA</Text>
+            </View>
             {destinations.map((item, index) => {
               // Filter based on preferences
 
               console.log(item);
-              if (!preferences.includes(item.type)) return null;
-
-              // Dynamically display category titles
-              const categoryTitle = (() => {
-                switch (item.category) {
-                  case "FOOD":
-                    return "🥐 HRANA";
-                  case "🏛 Kultura i znamenitosti":
-                    return "🏛 Kultura i znamenitosti";
-                  case "CULTURAL":
-                    return "🎭 KULTURA";
-                  default:
-                    return item.category; // Return the category as is if no case matches
-                }
-              })();
+              if (item.category !== 'FOOD' && !preferences.includes(item.type)) return null;
 
               return (
                 <View key={index}>
-                  {/* Display category title */}
-                  {categoryTitle && (
-                    <Text style={styles.sectionTitle}>{categoryTitle}</Text>
-                  )}
 
                   <TouchableOpacity
                     style={styles.foodCard}
@@ -246,7 +231,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginVertical: 10,
-    color: "#333",
+    color: "#2A3663",
     textShadowColor: "rgba(0,0,0,0.3)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,

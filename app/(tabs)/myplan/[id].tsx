@@ -10,31 +10,35 @@ import {
   Image,
   Alert,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../../../lib/supabase";
 
 const { width } = Dimensions.get("window");
 
 export default function myPlan() {
   const router = useRouter();
-  const [data, setData] = useState([]); // Početna vrednost null
+  const [data, setData] = useState(null); // Početna vrednost null
   const [days, setDays] = useState([]);
   const [destinations, setDestinations] = useState([]); // Početna vrednost null
 
+  const { id } = useLocalSearchParams();
+
   useEffect(() => {
+    
+    if(!id) return null;
     const fetchLocations = async () => {
       const { data, error } = await supabase
         .from("trips")
-        .select("activities")
-        .eq("id", "3f89b691-f8e4-4f8b-b4f4-352855cf77d6");
+        .select("*")
+        .eq("id", id);
 
       if (error) {
         console.error("Error fetching locations:", error);
         Alert.alert("Error", "Failed to load locations.");
       } else if (data && data.length > 0) {
-        setData(data); // Postavi prvi objekat ako postoji
-        console.log(data);
+        setData(data[0]); // Postavi prvi objekat ako postoji
+        console.log(data[0]);
       }
     };
 
@@ -51,70 +55,73 @@ export default function myPlan() {
 
     fetchLocations();
     fetchDestinations();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     // Kada se `data` promeni, ažuriraj `days`
-    const allDays = data.flatMap((item) =>
-      item.activities?.days ? Object.entries(item.activities.days) : []
-    );
+    if (!data?.activities?.days) return;
+
+    const allDays = Object.entries(data.activities.days || {});
     setDays(allDays);
+
   }, [data]);
 
   const deleteFrom = async (activityId, day) => {
-    // Fetch current data from the trips table
-    const { data, error } = await supabase
+    // Fetch only the activities for the given trip
+    const { data: tripData, error } = await supabase
       .from("trips")
       .select("activities")
-      .eq("id", "3f89b691-f8e4-4f8b-b4f4-352855cf77d6");
-
+      .eq("id", id)
+      .single(); // Ensures we get a single object instead of an array
+  
     if (error) {
-      console.error("Error fetching locations:", error);
-      Alert.alert("Error", "Failed to load locations.");
-    } else if (data && data.length > 0) {
-      // Get the current activities
-      const activitiesData = data[0].activities;
-
-      // Remove the activityId from the specific day's activities
-      const updatedDays = { ...activitiesData.days };
-
-      if (updatedDays[day]) {
-        updatedDays[day] = updatedDays[day].filter((id) => id !== activityId); // Remove the activityId from the day
-      }
-
-      // Update the activities object with the modified days
-      const updatedActivities = {
-        ...activitiesData,
-        days: updatedDays,
-      };
-
-      // Update the trips table with the modified activities
-      const { error: updateError } = await supabase
-        .from("trips")
-        .update({ activities: updatedActivities })
-        .eq("id", "3f89b691-f8e4-4f8b-b4f4-352855cf77d6");
-
-      if (updateError) {
-        console.error("Error updating activities:", updateError);
-        Alert.alert("Error", "Failed to update activities.");
-      } else {
-        // Update the local state with the new data
-        setData([
-          {
-            ...data[0],
-            activities: updatedActivities,
-          },
-        ]);
-
-        console.log("Activity deleted successfully.");
-      }
+      console.error("Error fetching activities:", error);
+      Alert.alert("Error", "Failed to load activities.");
+      return;
     }
+  
+    if (!tripData?.activities?.days) {
+      console.warn("No activities found for this trip.");
+      return;
+    }
+  
+    // Clone current activities and remove the activity
+    const updatedDays = { ...tripData.activities.days };
+  
+    if (updatedDays[day]) {
+      updatedDays[day] = updatedDays[day].filter((actId) => actId !== activityId);
+  
+      // If the day becomes empty, optionally remove it
+    }
+  
+    // Update Supabase with the modified activities
+    const { error: updateError } = await supabase
+      .from("trips")
+      .update({ activities: {days: updatedDays } })
+      .eq("id", id);
+  
+    if (updateError) {
+      console.error("Error updating activities:", updateError);
+      Alert.alert("Error", "Failed to update activities.");
+      return;
+    }
+  
+    // Update local state properly
+    setData(prev => ({
+      ...prev,
+      activities: {
+        days: updatedDays
+      }
+    }));
+  
   };
+  
 
+  console.log(data);
   return (
     <ScrollView style={styles.container}>
       <ImageBackground
-        source={require("./eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png")}
+        source={{uri: data?.photo_url}}
         style={styles.topImage}
         imageStyle={{ borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}
       >
@@ -126,7 +133,7 @@ export default function myPlan() {
         </TouchableOpacity>
 
         <View style={styles.textContainer}>
-          <Text style={styles.sectionTitle}>TJT</Text>
+          <Text style={styles.sectionTitle}>{data?.title}</Text>
           <Text style={styles.seciondTitle}>Travel Plan</Text>
         </View>
       </ImageBackground>
@@ -168,7 +175,7 @@ export default function myPlan() {
                     source={
                       destination?.image.startsWith("http")
                         ? { uri: destination?.image }
-                        : require("./eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png") // Ako je lokalna
+                        : require("../eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png") // Ako je lokalna
                     }
                     style={styles.foodImage}
                   />
@@ -206,7 +213,7 @@ export default function myPlan() {
                         }}
                       >
                         <Text style={styles.foodInfo}>
-                          {destination?.description}
+                        {destination?.description.substring(0, 160) + "..."}
                         </Text>
                       </View>
                     </View>
@@ -221,15 +228,16 @@ export default function myPlan() {
                       }}
                     >
                       <Ionicons
-                        name="trash"
-                        size={22}
+                        name="navigate-outline"
+                        size={30}
                         color={"#B59F78"}
-                        onPress={() => router.replace("/goToDestination")}
+                        onPress={() => router.replace(`(tabs)/travelTo/${destination?.id}`)}
                       />
                       <Ionicons
-                        name="share-social-outline"
-                        size={22}
+                        name="trash"
+                        size={30}
                         color={"#B59F78"}
+                        onPress={() => deleteFrom(activityId,day)}
                       />
                     </View>
                   </View>
