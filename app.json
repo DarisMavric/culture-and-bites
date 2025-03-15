@@ -31,7 +31,8 @@
       [
         "@react-native-google-signin/google-signin"
       ],
-      "expo-font"
+      "expo-font",
+      "expo-router"
     ],
     "extra": {
       "eas": {
