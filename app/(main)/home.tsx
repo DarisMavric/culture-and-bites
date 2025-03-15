@@ -15,6 +15,7 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Destinations } from "../../components/activities";
 
 export default function Page() {
   const router = useRouter();
@@ -131,45 +132,7 @@ export default function Page() {
 
               return (
                 <View key={index}>
-                  <TouchableOpacity
-                    style={styles.foodCard}
-                    onPress={() => router.push(`/(tabs)/details/${item?.id}`)}
-                  >
-                    <Image
-                      source={{ uri: item?.image }}
-                      style={styles.foodImage}
-                    />
-                    <View style={styles.foodInfo}>
-                      <View style={styles.foodName}>
-                        <View style={{ flexDirection: "row" }}>
-                          <Text style={styles.foodTitle}>{item?.name}, </Text>
-                          <Text
-                            style={[styles.foodTitle, { color: "#B59F78" }]}
-                          >
-                            {item?.city}
-                          </Text>
-                        </View>
-
-                        <TouchableOpacity style={styles.badgeButton}>
-                          <Text style={styles.badgeButtonText}>
-                            {item.type}
-                          </Text>
-                        </TouchableOpacity>
-                        {item?.isPopular && (
-                          <TouchableOpacity style={styles.popularButton}>
-                            <Text style={styles.popularButtonText}>
-                              POPULAR
-                            </Text>
-                          </TouchableOpacity>
-                        )}
-                      </View>
-                      <View style={styles.foodBadges}>
-                        <Text style={styles.foodDescription}>
-                          {item.description.substring(0, 160) + "..."}
-                        </Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
+                  <Destinations item={item}/>
                 </View>
               );
             })}

@@ -35,7 +35,7 @@ const _layout = () => {
       <Tabs.Screen
         name="home"
         options={{
-          title: "home",
+          title: "Home",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" color="#B59F78" size={size} />
           ),
@@ -44,9 +44,18 @@ const _layout = () => {
       <Tabs.Screen
         name="saved"
         options={{
-          title: "saved",
+          title: "Saved",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="save" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="search"
+        options={{
+          title: "Search",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="search-outline" color={color} size={size} />
           ),
         }}
       />
