@@ -25,8 +25,7 @@ export default function myPlan() {
   const { id } = useLocalSearchParams();
 
   useEffect(() => {
-    
-    if(!id) return null;
+    if (!id) return null;
     const fetchLocations = async () => {
       const { data, error } = await supabase
         .from("trips")
@@ -63,7 +62,6 @@ export default function myPlan() {
 
     const allDays = Object.entries(data.activities.days || {});
     setDays(allDays);
-
   }, [data]);
 
   const deleteFrom = async (activityId, day) => {
@@ -73,55 +71,55 @@ export default function myPlan() {
       .select("activities")
       .eq("id", id)
       .single(); // Ensures we get a single object instead of an array
-  
+
     if (error) {
       console.error("Error fetching activities:", error);
       Alert.alert("Error", "Failed to load activities.");
       return;
     }
-  
+
     if (!tripData?.activities?.days) {
       console.warn("No activities found for this trip.");
       return;
     }
-  
+
     // Clone current activities and remove the activity
     const updatedDays = { ...tripData.activities.days };
-  
+
     if (updatedDays[day]) {
-      updatedDays[day] = updatedDays[day].filter((actId) => actId !== activityId);
-  
+      updatedDays[day] = updatedDays[day].filter(
+        (actId) => actId !== activityId
+      );
+
       // If the day becomes empty, optionally remove it
     }
-  
+
     // Update Supabase with the modified activities
     const { error: updateError } = await supabase
       .from("trips")
-      .update({ activities: {days: updatedDays } })
+      .update({ activities: { days: updatedDays } })
       .eq("id", id);
-  
+
     if (updateError) {
       console.error("Error updating activities:", updateError);
       Alert.alert("Error", "Failed to update activities.");
       return;
     }
-  
+
     // Update local state properly
-    setData(prev => ({
+    setData((prev) => ({
       ...prev,
       activities: {
-        days: updatedDays
-      }
+        days: updatedDays,
+      },
     }));
-  
   };
-  
 
   console.log(data);
   return (
     <ScrollView style={styles.container}>
       <ImageBackground
-        source={{uri: data?.photo_url}}
+        source={{ uri: data?.photo_url }}
         style={styles.topImage}
         imageStyle={{ borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}
       >
@@ -151,6 +149,10 @@ export default function myPlan() {
             >
               <Text style={styles.dayTitle}>{day}</Text>
               <TouchableOpacity
+                onPress={() => {
+                  console.log(day);
+                  router.push(`/(trip)/chooseActivities/${id}/${day}`);
+                }}
                 style={{
                   backgroundColor: "rgb(216, 219, 189)",
                   padding: 5,
@@ -213,7 +215,7 @@ export default function myPlan() {
                         }}
                       >
                         <Text style={styles.foodInfo}>
-                        {destination?.description.substring(0, 160) + "..."}
+                          {destination?.description.substring(0, 160) + "..."}
                         </Text>
                       </View>
                     </View>
@@ -231,13 +233,15 @@ export default function myPlan() {
                         name="navigate-outline"
                         size={30}
                         color={"#B59F78"}
-                        onPress={() => router.replace(`(tabs)/travelTo/${destination?.id}`)}
+                        onPress={() =>
+                          router.replace(`(tabs)/travelTo/${destination?.id}`)
+                        }
                       />
                       <Ionicons
                         name="trash"
                         size={30}
                         color={"#B59F78"}
-                        onPress={() => deleteFrom(activityId,day)}
+                        onPress={() => deleteFrom(activityId, day)}
                       />
                     </View>
                   </View>
