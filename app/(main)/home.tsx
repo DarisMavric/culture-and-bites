@@ -123,11 +123,11 @@ export default function Page() {
             <View>
               <Text style={styles.sectionTitle}>🥐 HRANA</Text>
             </View>
-            {destinations.map((item, index) => {
+            {destinations?.map((item, index) => {
               // Filter based on preferences
 
               console.log(item);
-              if (item.category !== "FOOD" && !preferences?.includes(item.type))
+              if (item?.category !== "FOOD" && !preferences?.includes(item.type))
                 return null;
 
               return (
