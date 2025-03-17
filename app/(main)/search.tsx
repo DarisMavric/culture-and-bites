@@ -1,6 +1,15 @@
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { supabase } from "../../lib/supabase";
 import { Cities, Destinations } from "../../components/activities";
 import CategorySelectionModal from "../../components/CategorySelectionModal";
@@ -52,7 +61,10 @@ const search = () => {
   console.log(search);
   return (
     <View style={{ flex: 1, backgroundColor: "#FAF6E3" }}>
-      <ScrollView style={{ backgroundColor: "#FAF6E3" }} contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
+      <ScrollView
+        style={{ backgroundColor: "#FAF6E3" }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}
+      >
         <View style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.greeting}>
@@ -194,6 +206,12 @@ const styles = StyleSheet.create(({
     paddingVertical: 5,
   },
 
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: "#333",
+    padding: 10,
+  },
   searchInput: {
     flex: 1,
     fontSize: 16,
