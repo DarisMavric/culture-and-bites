@@ -7,6 +7,7 @@ import {
   View,
 } from "react-native";
 import { Slot, Tabs, useRouter } from "expo-router";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { AuthProvider, useAuth } from "../../context/AuthContext";
 import { supabase } from "../../lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
@@ -42,11 +43,11 @@ const _layout = () => {
         }}
       />
       <Tabs.Screen
-        name="saved"
+        name="blog"
         options={{
-          title: "Saved",
+          title: "Blog",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="save" color={color} size={size} />
+            <FontAwesome5 name="blogger-b" color={color} size={size} />
           ),
         }}
       />
