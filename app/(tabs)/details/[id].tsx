@@ -151,21 +151,6 @@ export default function FoodDetails() {
         </View>
       </View>
       <View>
-        <Text style={styles.sectionTitle}>Gde mozete probati</Text>
-        {details?.map((location, index) => (
-          <View style={styles.locationDiv} key={index}>
-            <Image
-              source={{
-                uri: location?.image,
-              }}
-              style={styles.locationIMG}
-            />
-            <View style={styles.locationRight}>
-              <Text style={styles.userNameStyle}>{location.locationName}</Text>
-              <Text style={styles.adressStyle}>{location.locationAdress}</Text>
-            </View>
-          </View>
-        ))}
       </View>
       <View style={{ width: "95%", alignItems: "center", alignSelf: "center" }}>
         <Text
@@ -174,7 +159,7 @@ export default function FoodDetails() {
             { alignSelf: "flex-start", marginTop: 10, marginLeft: 0 },
           ]}
         >
-          Oceni ovaj proizvod
+          Oceni
         </Text>
         <Text style={styles.reviewText}>Podelite vase misljenje s drugima</Text>
         <StarRating
@@ -201,7 +186,7 @@ export default function FoodDetails() {
         </TouchableOpacity>
       </View>
       <View style={{ marginBottom: 50 }}>
-        <Text style={styles.sectionTitle}>Utisci o proizvodu</Text>
+        <Text style={styles.sectionTitle}>Utisci:</Text>
         <View>
           {reviews.map((review) => (
             <View key={review.id} style={styles.commentDiv}>

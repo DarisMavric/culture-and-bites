@@ -212,12 +212,6 @@ const styles = StyleSheet.create(({
     color: "#333",
     padding: 10,
   },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: "#333",
-    padding: 10,
-  },
 
   sectionTitle: {
     fontSize: 18,

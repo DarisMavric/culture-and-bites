@@ -45,12 +45,6 @@ export default function Page() {
         }
       };
 
-      fetchTrip();
-    }
-  }, [id]);
-
-  useEffect(() => {
-    if (text && data) {
       const fetchLocations = async () => {
         const { data, error } = await supabase.from("cities").select("*");
 
@@ -62,65 +56,22 @@ export default function Page() {
         }
       };
 
-      const fetchCityId = async () => {
-        const url = `https://booking-com15.p.rapidapi.com/api/v1/hotels/searchDestination?query=${text}&search_type='city'`;
+      const fetchHotels = async () => {
+        const { data, error } = await supabase.from("hotels").select("*").eq('city', "Beograd");
 
-        const options = {
-          method: "GET",
-          headers: {
-            "x-rapidapi-key":
-              "9bd1eb820fmshb976f37434a1e56p17caf7jsn538d2e59e36c", // Zameni sa svojim API ključem
-            "x-rapidapi-host": "booking-com15.p.rapidapi.com",
-          },
-        };
-
-        try {
-          const response = await fetch(url, options);
-          const result = await response.json();
-          if (result) {
-            setCityID(result.data[0].dest_id);
-            console.log(result.data[0].dest_id);
-          } else {
-            console.log("City not found");
-            return null;
-          }
-        } catch (error) {
-          console.error("Error fetching city ID:", error);
+        if (error) {
+          console.error("Error fetching locations:", error);
+          Alert.alert("Error", "Failed to load locations.");
+        } else {
+          setHotels(data);
         }
       };
 
-      // Poziv funkcije
+      fetchHotels();
       fetchLocations();
-      fetchCityId();
+      fetchTrip();
     }
-  }, [text, data]);
-
-  useEffect(() => {
-    const fetchHotels = async () => {
-      if (cityID) {
-        const url = `https://booking-com15.p.rapidapi.com/api/v1/hotels/searchHotels?dest_id=${cityID}&search_type=city&arrival_date=2025-03-13&departure_date=2025-03-15`;
-
-        const options = {
-          method: "GET",
-          headers: {
-            "X-RapidAPI-Key":
-              "9bd1eb820fmshb976f37434a1e56p17caf7jsn538d2e59e36c", // Zameni sa svojim API ključem
-            "X-RapidAPI-Host": "booking-com15.p.rapidapi.com",
-          },
-        };
-
-        try {
-          const response = await fetch(url, options);
-          const result = await response.json();
-          console.log(`Hotels for You:`, result.data.hotels);
-          return result.hotels;
-        } catch (error) {
-          console.error("Error fetching hotels:", error);
-        }
-      }
-    };
-    fetchHotels();
-  }, [cityID]);
+  }, [id]);
 
   const dodajHotel = async () => {
     console.log("aha");
@@ -129,6 +80,8 @@ export default function Page() {
   const preskoci = async () => {
     router.replace(`/home`);
   };
+
+  console.log(hotels);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -153,22 +106,22 @@ export default function Page() {
             style={styles.image}
             resizeMode="cover"
           />
-          <Text style={styles.imageText}>Izaberite Grad</Text>
+          <Text style={styles.imageText}>Izaberite Hotel</Text>
         </View>
         <View style={styles.searchContainer}>
           <TextInput
-            placeholder="Istraži Gradove..."
+            placeholder="Istraži Hotele..."
             style={styles.searchInput}
             placeholderTextColor="#444"
           />
         </View>
 
-        {locations?.map((location, index) => {
+        {hotels?.map((hotel, index) => {
           return (
             <View style={styles.recommendedCard} key={index}>
               <Image
                 source={{
-                  uri: location?.cityImage,
+                  uri: hotel?.image,
                 }}
                 style={styles.recommendedImage}
               />
@@ -176,22 +129,18 @@ export default function Page() {
                 <View style={styles.tagsRow}>
                   <Text
                     style={styles.cityTitle}
-                  >{`${location?.name},${location?.country}`}</Text>
-                  <Text style={styles.tag}>Food</Text>
-                  <Text style={styles.tag}>Culture & Museums</Text>
-                  <Text style={styles.tag}>Family Trip</Text>
+                  >{`${hotel?.name},${hotel?.city}`}</Text>
                 </View>
                 <View style={styles.descriptionView}>
-                  <Text style={styles.description}>
-                    {location?.description.substring(0, 50) + "..."}
-                  </Text>
+                  <Text style={styles.description}><Ionicons name="wallet-outline" size={12}/> {hotel?.price}</Text>
+                  <Text style={styles.description}><Ionicons name="bed-outline" size={12}/> {hotel?.room}</Text>
                   <TouchableOpacity
                     style={
-                      selected.includes(location?.name)
+                      selected.includes(hotel?.name)
                         ? styles.exploreSelectedButton
                         : styles.exploreButton
                     }
-                    onPress={() => setSelected(location?.name)}
+                    onPress={() => setSelected(hotel?.name)}
                   >
                     <Text style={styles.exploreButtonText}>ODABRERI</Text>
                   </TouchableOpacity>
@@ -340,7 +289,7 @@ const styles = StyleSheet.create({
   },
   descriptionView: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     width: "auto",
   },
   description: {

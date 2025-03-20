@@ -62,6 +62,11 @@ const myTrips = () => {
         </View>
       </ImageBackground>
 
+      <Button
+                  title="Kreiraj Novo Putovanje"
+                  onPress={() => router.replace("(trip)/dates")}
+                ></Button>
+
       <View
         style={{
           width: "100%",
@@ -111,10 +116,6 @@ const myTrips = () => {
                   </ImageBackground>
                 </View>
 
-                <Button
-                  title="Kreiraj Novo Putovanje"
-                  onPress={() => router.replace("(trip)/dates")}
-                ></Button>
 
                 <View
                   style={{
