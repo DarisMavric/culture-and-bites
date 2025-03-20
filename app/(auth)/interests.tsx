@@ -1,4 +1,11 @@
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useFonts,
@@ -11,17 +18,32 @@ import { useRouter } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Page() {
-
-
   const { session } = useAuth();
 
   let [fontsLoaded] = useFonts({
     LeagueSpartan_700Bold,
   });
 
-  const foodTypes = ["Kafici i poslasticarnice", "Restorani", "Ulicna Hrana", "Tematski restorani"];
-  const cultureTypes = ["Muzeji i galerije", "Istorijske znamenitosti", "Umetnost i arhitektura", "Religijske lokacije", "Tematske ture"];
-  const activityTypes = ["Avanturističke aktivnosti", "Noćni život", "Wellness i spa", "Porodicne aktivnosti", "Sezonski dogadjaji"];
+  const foodTypes = [
+    "Kafici i poslasticarnice",
+    "Restorani",
+    "Ulicna Hrana",
+    "Tematski restorani",
+  ];
+  const cultureTypes = [
+    "Muzeji i galerije",
+    "Istorijske znamenitosti",
+    "Umetnost i arhitektura",
+    "Religijske lokacije",
+    "Tematske ture",
+  ];
+  const activityTypes = [
+    "Avanturističke aktivnosti",
+    "Noćni život",
+    "Wellness i spa",
+    "Porodicne aktivnosti",
+    "Sezonski dogadjaji",
+  ];
 
   const [selectedButtons, setSelectedButtons] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -30,27 +52,30 @@ export default function Page() {
   const router = useRouter();
 
   console.log(foodPreferences);
-  console.log(session?.user.email)
+  console.log(session?.user.email);
 
   useEffect(() => {
     const fetchLocations = async () => {
-      const { data, error } = await supabase.from('cities').select('*');
+      const { data, error } = await supabase.from("cities").select("*");
 
       if (error) {
-        console.error('Error fetching locations:', error);
+        console.error("Error fetching locations:", error);
       } else {
         setLocations(data);
       }
     };
 
     const fetchUser = async () => {
-      const { data, error } = await supabase.from('users').select('preferences').eq('id', session?.user.id);
+      const { data, error } = await supabase
+        .from("users")
+        .select("preferences")
+        .eq("id", session?.user.id);
 
       if (error) {
-        console.error('Error fetching user:', );
+        console.error("Error fetching user:");
       } else {
-        if(data.length > 0){
-          router.replace('/home')
+        if (data.length > 0) {
+          router.replace("/home");
         }
       }
     };
@@ -60,15 +85,18 @@ export default function Page() {
   }, []);
 
   const nextButton = async () => {
-    const { data, error } = await supabase.from("users").update({ preferences: foodPreferences }).eq('email', session?.user.email);
+    const { data, error } = await supabase
+      .from("users")
+      .update({ preferences: foodPreferences })
+      .eq("email", session?.user.email);
 
     if (error) {
       console.error("Error fetching locations:", error);
       Alert.alert("Error", "Failed to load locations.");
     } else {
-      router.replace('/home')
+      router.replace("/home");
     }
-  }
+  };
 
   const isSelected = (option) => foodPreferences.includes(option);
   console.log(locations[0]?.name);
@@ -76,12 +104,12 @@ export default function Page() {
   const selected = (value) => {
     setFoodPreferences((prevSelected) => {
       if (prevSelected.includes(value)) {
-        return prevSelected.filter((item) => item !== value)
+        return prevSelected.filter((item) => item !== value);
       } else {
-        return [...prevSelected, value]
+        return [...prevSelected, value];
       }
-    })
-  }
+    });
+  };
 
   if (!fontsLoaded) {
     return <Text>asdasdasd</Text>;
@@ -108,13 +136,16 @@ export default function Page() {
           {foodTypes.map((item, index) => {
             return (
               <TouchableOpacity
-                style={[styles.button, isSelected(item) && styles.pressedButton]}
+                style={[
+                  styles.button,
+                  isSelected(item) && styles.pressedButton,
+                ]}
                 onPress={() => selected(item)}
                 key={index}
               >
                 <Text style={styles.pick}>{item}</Text>
               </TouchableOpacity>
-            )
+            );
           })}
         </View>
         <View style={{ marginTop: 10 }}>
@@ -125,13 +156,16 @@ export default function Page() {
           {cultureTypes.map((item, index) => {
             return (
               <TouchableOpacity
-                style={[styles.button, isSelected(item) && styles.pressedButton]}
+                style={[
+                  styles.button,
+                  isSelected(item) && styles.pressedButton,
+                ]}
                 onPress={() => selected(item)}
                 key={index}
               >
                 <Text style={styles.pick}>{item}</Text>
               </TouchableOpacity>
-            )
+            );
           })}
         </View>
         <View style={{ marginTop: 10 }}>
@@ -142,18 +176,29 @@ export default function Page() {
           {activityTypes.map((item, index) => {
             return (
               <TouchableOpacity
-                style={[styles.button, isSelected(item) && styles.pressedButton]}
+                style={[
+                  styles.button,
+                  isSelected(item) && styles.pressedButton,
+                ]}
                 onPress={() => selected(item)}
                 key={index}
               >
                 <Text style={styles.pick}>{item}</Text>
               </TouchableOpacity>
-            )
+            );
           })}
         </View>
       </View>
       <TouchableOpacity style={styles.nextButton} onPress={() => nextButton()}>
-        <Text style={{ fontSize: 25, color: "#fff", fontFamily: "LeagueSpartan_700Bold" }}>DALJE</Text>
+        <Text
+          style={{
+            fontSize: 25,
+            color: "#fff",
+            fontFamily: "LeagueSpartan_700Bold",
+          }}
+        >
+          DALJE
+        </Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -181,7 +226,7 @@ const styles = StyleSheet.create({
     height: 120,
   },
   homeButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     left: 10,
     zIndex: 1,
@@ -192,7 +237,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     elevation: 5,
   },
-  title: { fontSize: 30, color: "#2A3663", fontFamily: "LeagueSpartan_700Bold", marginBottom: 5, },
+  title: {
+    fontSize: 30,
+    color: "#2A3663",
+    fontFamily: "LeagueSpartan_700Bold",
+    marginBottom: 5,
+  },
   button: {
     paddingTop: 5,
     paddingBottom: 5,
@@ -212,8 +262,8 @@ const styles = StyleSheet.create({
   },
 
   pressedButton: {
-    color: '#fff',
-    backgroundColor: "#B59F78"
+    color: "#fff",
+    backgroundColor: "#B59F78",
   },
   nextButton: {
     backgroundColor: "#A6B89F",
@@ -222,8 +272,8 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     borderRadius: 20,
-    position: 'absolute',
+    position: "absolute",
     bottom: 20,
-    right: 10
-  }
+    right: 10,
+  },
 });

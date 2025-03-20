@@ -2,7 +2,6 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   FlatList,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -12,6 +11,7 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 const blogPosts = [
   {
     id: "1",
@@ -48,116 +48,108 @@ const BlogBlock = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);
 
   return (
-    <View style={styles.blockContainer}>
-      {/* Header posta */}
-      <View style={styles.blockHeader}>
-        <Image
-          source={require("./7512444f-f54a-4ed1-8fcd-684a2c6c913b.png")}
-          style={styles.avatar}
-        />
-        <View
-          style={{
-            alignItems: "center",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            width: "80%",
-          }}
-        >
-          <View>
-            <Text style={styles.blockTitle}>
-              {post.user} {"-> "}
-              <Text
-                style={styles.placeText}
-                onPress={() => router.push(`/(tabs)/details/${post.placeid}`)}
-              >
-                {post.place}
+    <TouchableOpacity onPress={() => router.push(`/(tabs)/blogDetails/${123}`)}>
+      <View style={styles.blockContainer}>
+        {/* Header posta */}
+        <View style={styles.blockHeader}>
+          <Image
+            source={require("./7512444f-f54a-4ed1-8fcd-684a2c6c913b.png")}
+            style={styles.avatar}
+          />
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "80%",
+            }}
+          >
+            <View>
+              <Text style={styles.blockTitle}>
+                {post.user} {"-> "}
+                <Text
+                  style={styles.placeText}
+                  onPress={() => router.push(`/(tabs)/details/${post.placeid}`)}
+                >
+                  {post.place}
+                </Text>
               </Text>
-            </Text>
+            </View>
+            <TouchableOpacity style={{ alignSelf: "flex-end" }}>
+              <MaterialCommunityIcons name="share" size={20} color="black" />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={{ alignSelf: "flex-end" }}>
-            <MaterialCommunityIcons name="share" size={20} color="black" />
+        </View>
+
+        {/* Slika koju je user postovao */}
+        <Image
+          source={{
+            uri: "https://imgs.search.brave.com/U7ve3Fu3Or3OtNFOv5_2bulvzBO3bj2u14XNS1yAtVw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pMC53/cC5jb20vd3d3LnRo/ZWJhbGthbnNhbmRi/ZXlvbmQuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDIxLzA0/L2NldmFwaS1yZWNp/cGUtMTAucG5nP3Jl/c2l6ZT0xMDI0LDU3/NiZzc2w9MQ",
+          }}
+          style={styles.postImage}
+        />
+
+        {/* Sadržaj posta */}
+        <View style={styles.blockContent}>
+          <Text style={styles.postText}>{post.content}</Text>
+        </View>
+
+        {/* Akcije posta */}
+        <View style={styles.blockActions}>
+          <TouchableOpacity onPress={() => setIsLiked(!isLiked)}>
+            {isLiked ? (
+              <AntDesign name="like1" size={20} color="black" />
+            ) : (
+              <AntDesign name="like2" size={20} color="black" />
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setShowComments(!showComments)}>
+            {showComments ? (
+              <Text style={styles.actionText}>
+                <FontAwesome name="comment-o" size={20} color="black" /> Hide
+              </Text>
+            ) : (
+              <Text style={styles.actionText}>
+                <FontAwesome name="comment-o" size={20} color="black" />
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
+
+        {/* Komentari */}
+        {showComments && (
+          <View style={styles.commentsContainer}>
+            {post.comments.length > 0 ? (
+              post.comments.map((comment) => (
+                <Text key={comment.id} style={styles.commentText}>
+                  • {comment.text}
+                </Text>
+              ))
+            ) : (
+              <Text style={styles.noCommentsText}>Nema komentara.</Text>
+            )}
+          </View>
+        )}
       </View>
-
-      {/* Slika koju je user postovao */}
-      <Image
-        source={{
-          uri: "https://imgs.search.brave.com/U7ve3Fu3Or3OtNFOv5_2bulvzBO3bj2u14XNS1yAtVw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pMC53/cC5jb20vd3d3LnRo/ZWJhbGthbnNhbmRi/ZXlvbmQuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDIxLzA0/L2NldmFwaS1yZWNp/cGUtMTAucG5nP3Jl/c2l6ZT0xMDI0LDU3/NiZzc2w9MQ",
-        }}
-        style={styles.postImage}
-      />
-
-      {/* Sadržaj posta */}
-      <View style={styles.blockContent}>
-        <Text style={styles.postText}>{post.content}</Text>
-      </View>
-
-      {/* Akcije posta */}
-      <View style={styles.blockActions}>
-        <TouchableOpacity onPress={() => setIsLiked(!isLiked)}>
-          {isLiked ? (
-            <AntDesign name="like1" size={20} color="black" />
-          ) : (
-            <AntDesign name="like2" size={20} color="black" />
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setShowComments(!showComments)}>
-          {showComments ? (
-            <Text style={styles.actionText}>
-              <FontAwesome name="comment-o" size={20} color="black" /> Hide
-            </Text>
-          ) : (
-            <Text style={styles.actionText}>
-              <FontAwesome name="comment-o" size={20} color="black" />
-            </Text>
-          )}
-        </TouchableOpacity>
-      </View>
-
-      {/* Komentari */}
-      {showComments && (
-        <View style={styles.commentsContainer}>
-          {post.comments.length > 0 ? (
-            post.comments.map((comment) => (
-              <Text key={comment.id} style={styles.commentText}>
-                • {comment.text}
-              </Text>
-            ))
-          ) : (
-            <Text style={styles.noCommentsText}>Nema komentara.</Text>
-          )}
-        </View>
-      )}
-    </View>
+    </TouchableOpacity>
   );
 };
 
 const blog = () => {
   return (
-    <ScrollView
-      style={styles.scrollContainer}
-      contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}
-    >
-      <Text style={styles.headerTitle}>Blog</Text>
-
-      <FlatList
-        data={blogPosts}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <BlogBlock post={item} />}
-        contentContainerStyle={styles.flatListContainer}
-      />
-    </ScrollView>
+    <FlatList
+      data={blogPosts}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => <BlogBlock post={item} />}
+      ListHeaderComponent={() => <Text style={styles.headerTitle}>Blog</Text>}
+      contentContainerStyle={styles.flatListContainer}
+    />
   );
 };
 
 export default blog;
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flex: 1,
-    backgroundColor: "#FAF6E3", // Glavna pozadina
-  },
   headerTitle: {
     fontSize: 24,
     fontWeight: "bold",
@@ -183,7 +175,6 @@ const styles = StyleSheet.create({
   blockHeader: {
     flexDirection: "row",
     alignItems: "center",
-
     padding: 10,
   },
   avatar: {
@@ -196,6 +187,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#2A3663",
     fontSize: 16,
+  },
+  placeText: {
+    textDecorationLine: "underline",
+    color: "#2A3663",
   },
   postImage: {
     width: "100%",
@@ -232,10 +227,6 @@ const styles = StyleSheet.create({
   },
   noCommentsText: {
     fontStyle: "italic",
-    color: "#2A3663",
-  },
-  placeText: {
-    textDecorationLine: "underline",
     color: "#2A3663",
   },
   destinationButton: {
