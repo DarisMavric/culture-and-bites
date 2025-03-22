@@ -21,7 +21,7 @@ export default function Page() {
   const [hotels, setHotels] = useState([]);
   const [cityID, setCityID] = useState(null);
 
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState(null);
 
   const router = useRouter();
 
@@ -74,14 +74,35 @@ export default function Page() {
   }, [id]);
 
   const dodajHotel = async () => {
-    console.log("aha");
+    if (id) {
+      console.log("Who Is Going Trip Id: ", id);
+  
+      // Update the trip with the new city image and title
+      const { data, error } = await supabase
+        .from("trips")
+        .update([
+          {
+            rented_hotel: selected,
+          },
+        ])
+        .eq('id', id)
+  
+      if (error) {
+        console.error("Greška pri update:", error.message);
+      } else {
+
+        router.replace(`/(trip)/chooseCar?id=${id}`);
+  
+        setSelected(null);
+      }
+    }
   };
 
   const preskoci = async () => {
-    router.replace(`/home`);
+    router.replace(`/(trip)/chooseCar?id=${id}`);
   };
 
-  console.log(hotels);
+  console.log(selected);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -136,11 +157,11 @@ export default function Page() {
                   <Text style={styles.description}><Ionicons name="bed-outline" size={12}/> {hotel?.room}</Text>
                   <TouchableOpacity
                     style={
-                      selected.includes(hotel?.name)
+                      selected === hotel?.id
                         ? styles.exploreSelectedButton
                         : styles.exploreButton
                     }
-                    onPress={() => setSelected(hotel?.name)}
+                    onPress={() => setSelected(hotel?.id)}
                   >
                     <Text style={styles.exploreButtonText}>ODABRERI</Text>
                   </TouchableOpacity>
@@ -149,7 +170,8 @@ export default function Page() {
             </View>
           );
         })}
-
+      </ScrollView>
+      <View style={styles.buttons}>
         <TouchableOpacity style={styles.nextButton} onPress={() => preskoci()}>
           <Text
             style={{
@@ -176,7 +198,7 @@ export default function Page() {
             DALJE
           </Text>
         </TouchableOpacity>
-      </ScrollView>
+        </View>
     </SafeAreaView>
   );
 }
@@ -216,6 +238,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     elevation: 5,
   },
+
+  buttons: {
+    position: "absolute",
+    bottom: 10,
+    right: 5,
+    flex: 1,
+    flexDirection: 'row'
+  },
   nextButton: {
     backgroundColor: "#A6B89F",
     paddingTop: 5,
@@ -223,9 +253,8 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     borderRadius: 20,
-    position: "absolute",
-    bottom: 20,
-    right: 10,
+    textAlign: 'center',
+    margin: 5
   },
 
   searchContainer: {

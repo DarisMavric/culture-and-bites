@@ -21,7 +21,7 @@ export default function Page() {
   const [cars, setCars] = useState([]);
   const [cityID, setCityID] = useState(null);
 
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState(null);
 
   const router = useRouter();
 
@@ -73,8 +73,29 @@ export default function Page() {
     }
   }, [id]);
 
-  const dodajHotel = async () => {
-    console.log("aha");
+  const dodajVozilo = async () => {
+    if (id) {
+      console.log("Who Is Going Trip Id: ", id);
+  
+      // Update the trip with the new city image and title
+      const { data, error } = await supabase
+        .from("trips")
+        .update([
+          {
+            rented_car: selected,
+          },
+        ])
+        .eq('id', id)
+  
+      if (error) {
+        console.error("Greška pri update:", error.message);
+      } else {
+
+        router.replace(`/myplan/${id}`)
+  
+        setSelected(null);
+      }
+    }
   };
 
   const preskoci = async () => {
@@ -132,15 +153,15 @@ export default function Page() {
                 </View>
                 <View style={styles.descriptionView}>
                 <Text style={styles.description}>{car?.type}</Text>
-                  <Text style={styles.description}><Ionicons name="wallet-outline" size={12}/> {car?.price}</Text>
-                  <Text style={styles.description}><Ionicons name="car-outline" size={12}/> {car?.doors}</Text>
+                  <Text style={styles.description}><Ionicons name="wallet-outline" size={15}/> {car?.price}</Text>
+                  <Text style={styles.description}><Ionicons name="car-outline" size={15}/> {car?.doors}</Text>
                   <TouchableOpacity
                     style={
-                      selected.includes(car?.name)
+                      selected === car?.id
                         ? styles.exploreSelectedButton
                         : styles.exploreButton
                     }
-                    onPress={() => setSelected(car?.name)}
+                    onPress={() => setSelected(car?.id)}
                   >
                     <Text style={styles.exploreButtonText}>ODABRERI</Text>
                   </TouchableOpacity>
@@ -149,34 +170,35 @@ export default function Page() {
             </View>
           );
         })}
-
-        <TouchableOpacity style={styles.nextButton} onPress={() => preskoci()}>
-          <Text
-            style={{
-              fontSize: 25,
-              color: "#fff",
-              fontFamily: "LeagueSpartan_700Bold",
-            }}
-          >
-            Preskoci
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.nextButton}
-          onPress={() => dodajHotel()}
-        >
-          <Text
-            style={{
-              fontSize: 25,
-              color: "#fff",
-              fontFamily: "LeagueSpartan_700Bold",
-            }}
-          >
-            DALJE
-          </Text>
-        </TouchableOpacity>
       </ScrollView>
+      <View style={styles.buttons}>
+              <TouchableOpacity style={styles.nextButton} onPress={() => preskoci()}>
+                <Text
+                  style={{
+                    fontSize: 25,
+                    color: "#fff",
+                    fontFamily: "LeagueSpartan_700Bold",
+                  }}
+                >
+                  Preskoci
+                </Text>
+              </TouchableOpacity>
+      
+              <TouchableOpacity
+                style={styles.nextButton}
+                onPress={() => dodajVozilo()}
+              >
+                <Text
+                  style={{
+                    fontSize: 25,
+                    color: "#fff",
+                    fontFamily: "LeagueSpartan_700Bold",
+                  }}
+                >
+                  DALJE
+                </Text>
+              </TouchableOpacity>
+              </View>
     </SafeAreaView>
   );
 }
@@ -216,6 +238,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     elevation: 5,
   },
+  buttons: {
+    position: "absolute",
+    bottom: 10,
+    right: 5,
+    flex: 1,
+    flexDirection: 'row'
+  },
   nextButton: {
     backgroundColor: "#A6B89F",
     paddingTop: 5,
@@ -223,9 +252,8 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     borderRadius: 20,
-    position: "absolute",
-    bottom: 20,
-    right: 10,
+    textAlign: 'center',
+    margin: 5
   },
 
   searchContainer: {

@@ -111,7 +111,7 @@ export default function Page() {
                 </Text>
                 <TouchableOpacity
                   style={styles.exploreButton}
-                  onPress={() => router.replace("/(trip)/chooseActivities")}
+                  onPress={() => router.replace("/(trip)/chooseHotel")}
                 >
                   <Text style={styles.exploreButtonText}>EXPLORE</Text>
                 </TouchableOpacity>
