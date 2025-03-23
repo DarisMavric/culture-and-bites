@@ -20,6 +20,8 @@ export default function myPlan() {
   const router = useRouter();
   const [data, setData] = useState(null); // Početna vrednost null
   const [days, setDays] = useState([]);
+  const [cars,setCars] = useState([]);
+  const [hotels,setHotels] = useState([]);
   const [destinations, setDestinations] = useState([]); // Početna vrednost null
 
   const { id } = useLocalSearchParams();
@@ -51,7 +53,31 @@ export default function myPlan() {
         setDestinations(data); // Postavi prvi objekat ako postoji
       }
     };
+    
+    const fetchCars = async () => {
+      const { data, error } = await supabase.from("cars").select("*");
 
+      if (error) {
+        console.error("Error fetching locations:", error);
+        Alert.alert("Error", "Failed to load locations.");
+      } else if (data && data.length > 0) {
+        setCars(data); // Postavi prvi objekat ako postoji
+      }
+    };
+
+    const fetchHotels = async () => {
+      const { data, error } = await supabase.from("hotels").select("*");
+
+      if (error) {
+        console.error("Error fetching locations:", error);
+        Alert.alert("Error", "Failed to load locations.");
+      } else if (data && data.length > 0) {
+        setHotels(data); // Postavi prvi objekat ako postoji
+      }
+    };
+
+    fetchCars();
+    fetchHotels();
     fetchLocations();
     fetchDestinations();
   }, [id]);
@@ -136,6 +162,22 @@ export default function myPlan() {
         </View>
       </ImageBackground>
 
+      {cars
+      .filter(car => car.id === data?.rented_car)
+      .map((car, index) => (
+        <View key={index}>
+          <Text>{car.name}</Text>
+        </View>
+      ))}
+
+      {hotels.filter(hotel => hotel.id === data?.rented_hotel)
+      .map((hotel,index) => {
+        return (
+          <View key={index}>
+            <Text>{hotel?.name}</Text>
+          </View>
+        )
+      })}
       <View style={{ padding: 10 }}>
         {days.map(([day, activities], index) => (
           <View key={index}>
