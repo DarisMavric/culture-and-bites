@@ -126,7 +126,7 @@ export default function BlogDetails() {
           )}
         </View>
       </ScrollView>
-      {/* Fiksirani input za komentare */}
+
       <View style={styles.commentInputContainer}>
         <TextInput
           style={styles.commentInput}
