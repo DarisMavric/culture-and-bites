@@ -20,8 +20,8 @@ export default function myPlan() {
   const router = useRouter();
   const [data, setData] = useState(null); // Početna vrednost null
   const [days, setDays] = useState([]);
-  const [cars,setCars] = useState([]);
-  const [hotels,setHotels] = useState([]);
+  const [cars, setCars] = useState([]);
+  const [hotels, setHotels] = useState([]);
   const [destinations, setDestinations] = useState([]); // Početna vrednost null
 
   const { id } = useLocalSearchParams();
@@ -38,6 +38,7 @@ export default function myPlan() {
         console.error("Error fetching locations:", error);
         Alert.alert("Error", "Failed to load locations.");
       } else if (data && data.length > 0) {
+        console.log(data[0]);
         setData(data[0]); // Postavi prvi objekat ako postoji
         console.log(data[0]);
       }
@@ -53,7 +54,7 @@ export default function myPlan() {
         setDestinations(data); // Postavi prvi objekat ako postoji
       }
     };
-    
+
     const fetchCars = async () => {
       const { data, error } = await supabase.from("cars").select("*");
 
@@ -161,23 +162,62 @@ export default function myPlan() {
           <Text style={styles.seciondTitle}>Travel Plan</Text>
         </View>
       </ImageBackground>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <View>
+          {cars
+            .filter((car) => car.id === data?.rented_car)
+            .map((car, index) => (
+              <View key={index}>
+                <Text
+                  style={{ paddingLeft: 10, letterSpacing: 0.5, fontSize: 14 }}
+                >
+                  {car.name}
+                </Text>
+              </View>
+            ))}
 
-      {cars
-      .filter(car => car.id === data?.rented_car)
-      .map((car, index) => (
-        <View key={index}>
-          <Text>{car.name}</Text>
+          {hotels
+            .filter((hotel) => hotel.id === data?.rented_hotel)
+            .map((hotel, index) => {
+              return (
+                <View key={index}>
+                  <Text
+                    style={{
+                      paddingLeft: 10,
+                      letterSpacing: 0.5,
+                      fontSize: 14,
+                    }}
+                  >
+                    {hotel?.name}
+                  </Text>
+                </View>
+              );
+            })}
         </View>
-      ))}
-
-      {hotels.filter(hotel => hotel.id === data?.rented_hotel)
-      .map((hotel,index) => {
-        return (
-          <View key={index}>
-            <Text>{hotel?.name}</Text>
-          </View>
-        )
-      })}
+        <TouchableOpacity
+          onPress={() => {
+            router.push(`/(tabs)/localProducts/${data?.id}`);
+          }}
+        >
+          <Text
+            style={{
+              paddingRight: 10,
+              letterSpacing: 0.5,
+              fontSize: 14,
+              textDecorationLine: "underline",
+              color: "#2A3663",
+            }}
+          >
+            Lokalni proizvodi
+          </Text>
+        </TouchableOpacity>
+      </View>
       <View style={{ padding: 10 }}>
         {days.map(([day, activities], index) => (
           <View key={index}>
@@ -380,8 +420,8 @@ const styles = StyleSheet.create({
 
   dayTitle: {
     fontSize: 20,
-    paddingLeft: 16,
-    marginTop: 10,
+
+    marginVertical: 10,
     fontWeight: "bold",
     color: "#2A3663",
   },

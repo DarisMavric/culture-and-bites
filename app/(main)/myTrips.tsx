@@ -63,9 +63,9 @@ const myTrips = () => {
       </ImageBackground>
 
       <Button
-                  title="Kreiraj Novo Putovanje"
-                  onPress={() => router.replace("(trip)/dates")}
-                ></Button>
+        title="Kreiraj Novo Putovanje"
+        onPress={() => router.replace("(trip)/dates")}
+      ></Button>
 
       <View
         style={{
@@ -84,7 +84,7 @@ const myTrips = () => {
                       typeof trip.photo_url === "string" &&
                       trip.photo_url.startsWith("http")
                         ? { uri: trip.photo_url }
-                        : require("../(tabs)/eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png") // Ako je lokalna
+                        : require("../(tabs)/eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png")
                     }
                     style={{
                       width: "100%",
@@ -115,7 +115,6 @@ const myTrips = () => {
                     </View>
                   </ImageBackground>
                 </View>
-
 
                 <View
                   style={{
