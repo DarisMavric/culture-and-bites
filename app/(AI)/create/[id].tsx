@@ -37,7 +37,7 @@ export default function Page() {
   const {id} = useLocalSearchParams();
 
 
-  const apiKey = 'api-key';
+  const apiKey = 'AIzaSyBzy-r0Zwfxtx6WUb3KkMrGVWYxnC_4Wr0';
     const genAI = new GoogleGenerativeAI(apiKey);
   
     const model = genAI.getGenerativeModel({
