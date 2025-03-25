@@ -65,6 +65,12 @@ const myTrips = () => {
       <Button
         title="Kreiraj Novo Putovanje"
         onPress={() => router.replace("(trip)/dates")}
+        color={'#B59F78'}
+      ></Button>
+      <Button
+        title="Kreiraj Novo Putovanje Pomocu Vestacke Inteligencije"
+        onPress={() => router.replace("(AI)/addDate")}
+        color={'#2A3663'}
       ></Button>
 
       <View
