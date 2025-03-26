@@ -58,7 +58,7 @@ export default function Page() {
 
     fetchUserPreferences();
     fetchLocations();
-  }, []);
+  }, [session?.user?.id]);
 
   return (
     <SafeAreaProvider>
