@@ -8,6 +8,7 @@ import {
   ScrollView,
   Platform,
   Alert,
+  Dimensions,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { supabase } from "../../lib/supabase";
@@ -16,6 +17,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Destinations } from "../../components/activities";
 import Slider from "../../components/slider";
+
+const height = Dimensions.get("window").height;
 
 export default function Page() {
   const router = useRouter();
@@ -91,13 +94,14 @@ export default function Page() {
           <View>
             <Slider />
           </View>
+
           <View style={styles.foodContainer}>
             <View>
               <Text style={styles.sectionTitle}>🍽 Hrana i Restorani</Text>
             </View>
             {destinations.map((item, index) => {
               const isMatchingCategory = item.category === "Hrana i Restorani";
-              const shouldShow = preferences.includes(item.type)
+              const shouldShow = preferences.includes(item.type);
 
               if (isMatchingCategory && shouldShow) {
                 return (
@@ -116,9 +120,9 @@ export default function Page() {
               <Text style={styles.sectionTitle}>🏛 Kultura i znamenitosti</Text>
             </View>
             {destinations.map((item, index) => {
-
-              const isMatchingCategory = item.category === "Kultura i znamenitosti"
-              const shouldShow = preferences.includes(item.type)
+              const isMatchingCategory =
+                item.category === "Kultura i znamenitosti";
+              const shouldShow = preferences.includes(item.type);
 
               if (isMatchingCategory && shouldShow) {
                 return (
@@ -134,12 +138,14 @@ export default function Page() {
 
           <View>
             <View>
-              <Text style={styles.sectionTitle}>🎭 Aktivnosti i doživljaji</Text>
+              <Text style={styles.sectionTitle}>
+                🎭 Aktivnosti i doživljaji
+              </Text>
             </View>
             {destinations.map((item, index) => {
-
-              const isMatchingCategory = item.category === "Aktivnosti i doživljaji"
-              const shouldShow = preferences.includes(item.type)
+              const isMatchingCategory =
+                item.category === "Aktivnosti i doživljaji";
+              const shouldShow = preferences.includes(item.type);
 
               if (isMatchingCategory && shouldShow) {
                 return (
@@ -153,8 +159,8 @@ export default function Page() {
             })}
           </View>
         </View>
-      </ScrollView >
-    </SafeAreaProvider >
+      </ScrollView>
+    </SafeAreaProvider>
   );
 }
 

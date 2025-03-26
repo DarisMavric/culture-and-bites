@@ -39,14 +39,15 @@ const myTrips = () => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#FAF6E3" }}>
-      <ImageBackground
-        source={require("../(tabs)/eiffel-tower-paris-france-EIFFEL0217-6ccc3553e98946f18c893018d5b42bde 8.png")}
+      <View
         style={{
+          backgroundColor: "#2A3663F5",
           width: "100%",
-          height: 200,
+          height: 150,
           justifyContent: "flex-end",
+          borderBottomLeftRadius: 20,
+          borderBottomRightRadius: 20,
         }}
-        imageStyle={{ borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}
       >
         <View
           style={{
@@ -60,21 +61,21 @@ const myTrips = () => {
             My Trips
           </Text>
         </View>
-      </ImageBackground>
+      </View>
 
       <View style={{ padding: 20 }}>
-      <Button
-        title="Kreiraj Novo Putovanje"
-        onPress={() => router.replace("(trip)/dates")}
-        color={'#B59F78'}
-      />
-      <View style={{ marginBottom: 10 }} />
-      <Button
-        title="Kreiraj Novo Putovanje Pomocu Vestacke Inteligencije"
-        onPress={() => router.replace("(AI)/addDate")}
-        color={'#2A3663'}
-      />
-    </View>
+        <Button
+          title="Kreiraj Novo Putovanje"
+          onPress={() => router.replace("(trip)/dates")}
+          color={"#B59F78"}
+        />
+        <View style={{ marginBottom: 10 }} />
+        <Button
+          title="Kreiraj Novo Putovanje Pomocu Vestacke Inteligencije"
+          onPress={() => router.replace("(AI)/addDate")}
+          color={"#2A3663"}
+        />
+      </View>
 
       <View
         style={{
