@@ -34,11 +34,14 @@
       "expo-font",
       "expo-router"
     ],
+    "owner": "cb2025",
     "extra": {
+      "router": {
+        "origin": false
+      },
       "eas": {
         "projectId": "d87d3c7e-1de3-4be1-9bbf-9cf7ae5cc09e"
       }
-    },
-    "owner": "cb2025"
+    }
   }
 }
