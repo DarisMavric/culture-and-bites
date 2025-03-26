@@ -9,173 +9,197 @@ import { Ionicons } from "@expo/vector-icons";
 
 export default function Page() {
 
-    const [locations, setLocations] = useState([]);
-      const [startDate, setStartDate] = useState(null);
-      const [endDate, setEndDate] = useState(null);
+  const [locations, setLocations] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
-      const [selected,setSelected] = useState(null);
-    
-      const router = useRouter();
-    
-      const { session } = useAuth();
-    
-      useEffect(() => {
-        const fetchLocations = async () => {
-          const { data, error } = await supabase.from("cities").select("*");
-    
-          if (error) {
-            console.error("Error fetching locations:", error);
-            Alert.alert("Error", "Failed to load locations.");
-          } else {
-            setLocations(data);
-          }
-        };
-    
-        fetchLocations();
-      }, []);
+  const [selected, setSelected] = useState(null);
 
+  const router = useRouter();
 
-      const dodajGrad = async() => {
-        console.log(selected);
-        router.replace(`/chooseHotel?text=${selected}`);
+  const { session } = useAuth();
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      const { data, error } = await supabase.from("cities").select("*");
+
+      if (error) {
+        console.error("Error fetching locations:", error);
+        Alert.alert("Error", "Failed to load locations.");
+      } else {
+        setLocations(data);
       }
+    };
+
+    fetchLocations();
+  }, []);
 
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView
-                    style={{ backgroundColor: "#FAF6E3" }}
-                    contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}
-            >
-                <TouchableOpacity
-                    style={styles.homeButton}
-                    onPress={() => router.replace('/home')}
-                >
-                    <Ionicons name="home" color="#B59F78" size={24} />
-              </TouchableOpacity>
-              <View style={styles.imageContainer}>
-                <Image
-                  source={{
-                    uri: locations.length > 0 ? locations[0].cityImage : "https://via.placeholder.com/300",
-                  }}
-                  style={styles.image}
-                  resizeMode="cover"
-                />
-                <Text style={styles.imageText}>Izaberite Grad</Text>
-              </View>
-              <View style={styles.searchContainer}>
-                          <TextInput
-                            placeholder="Istraži Gradove..."
-                            style={styles.searchInput}
-                            placeholderTextColor="#444"
-                          />
+  const dodajGrad = async () => {
+    console.log(selected);
+    router.replace(`/chooseHotel?text=${selected}`);
+  }
+
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        style={{ backgroundColor: "#FAF6E3" }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}
+      >
+        <TouchableOpacity
+          style={styles.homeButton}
+          onPress={() => router.replace('/home')}
+        >
+          <Ionicons name="home" color="#B59F78" size={24} />
+        </TouchableOpacity>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{
+              uri: locations.length > 0 ? locations[0].cityImage : "https://via.placeholder.com/300",
+            }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+          <Text style={styles.imageText}>Izaberite Grad</Text>
+        </View>
+        <View style={styles.searchContainer}>
+          <TextInput
+            placeholder="Istraži Gradove..."
+            style={styles.searchInput}
+            placeholderTextColor="#444"
+          />
+        </View>
+
+        {locations?.map((location, index) => {
+          return (
+            <View style={styles.recommendedCard} key={index}>
+              <Image
+                source={{
+                  uri: location?.cityImage,
+                }}
+                style={styles.recommendedImage}
+              />
+              <View style={styles.recommendedContent}>
+                <View style={styles.tagsRow}>
+                  <Text style={styles.cityTitle}>{`${location?.name},${location?.country}`}</Text>
+                  <Text style={styles.tag}>Food</Text>
+                  <Text style={styles.tag}>Culture & Museums</Text>
+                  <Text style={styles.tag}>Family Trip</Text>
                 </View>
+                <View style={styles.descriptionView}>
+                  <Text style={styles.description}>
+                    {location?.description.substring(0, 50) + '...'}
+                  </Text>
+                  <TouchableOpacity style={selected?.includes(location?.name) ? styles.exploreSelectedButton : styles.exploreButton} onPress={() => setSelected(location?.name)}>
+                    <Text style={styles.exploreButtonText}>ODABRERI</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          )
+        })}
 
-                {locations?.map((location,index) => {return (
-                    <View style={styles.recommendedCard} key={index}>
-                    <Image
-                      source={{
-                        uri: location?.cityImage,
-                      }}
-                      style={styles.recommendedImage}
-                    />
-                    <View style={styles.recommendedContent}>
-                      <View style={styles.tagsRow}>
-                        <Text style={styles.cityTitle}>{`${location?.name},${location?.country}`}</Text>
-                        <Text style={styles.tag}>Food</Text>
-                        <Text style={styles.tag}>Culture & Museums</Text>
-                        <Text style={styles.tag}>Family Trip</Text>
-                      </View>
-                      <View style={styles.descriptionView}>
-                        <Text style={styles.description}>
-                          {location?.description.substring(0,50) + '...'}
-                        </Text>
-                        <TouchableOpacity style={selected?.includes(location?.name) ? styles.exploreSelectedButton : styles.exploreButton} onPress={() => setSelected(location?.name)}>
-                          <Text style={styles.exploreButtonText}>ODABRERI</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
-                )} )}
-              
-              <TouchableOpacity style={styles.nextButton} onPress={() => dodajGrad()}>
-                  <Text style={{fontSize: 25,color: "#fff", fontFamily: "LeagueSpartan_700Bold"}}>DALJE</Text>
-              </TouchableOpacity>
+        <View style={styles.buttons}>
 
+          <TouchableOpacity
+            style={styles.nextButton}
+            onPress={() => dodajGrad()}
+          >
+            <Text
+              style={{
+                fontSize: 25,
+                color: "#fff",
+                fontFamily: "LeagueSpartan_700Bold",
+              }}
+            >
+              DALJE
+            </Text>
+          </TouchableOpacity>
+        </View>
 
 
 
 
 
-                  </ScrollView>
-            </SafeAreaView>
-    )
+
+      </ScrollView>
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "#FAF6E3",
-    },
-    imageContainer: {
-      backgroundColor: "#2A3663",
-    },
-    imageText: {
-      position: "absolute",
-      bottom: 0,
-      fontSize: 40,
-      margin: 10,
-      color: "#D8DBBD",
-      fontFamily: "LeagueSpartan_700Bold",
-    },
-    image: {
-      resizeMode: "cover",
-      opacity: 0.3,
-      width: "100%",
-      height: 120,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#FAF6E3",
+  },
+  imageContainer: {
+    backgroundColor: "#2A3663",
+  },
+  imageText: {
+    position: "absolute",
+    bottom: 0,
+    fontSize: 40,
+    margin: 10,
+    color: "#D8DBBD",
+    fontFamily: "LeagueSpartan_700Bold",
+  },
+  image: {
+    resizeMode: "cover",
+    opacity: 0.3,
+    width: "100%",
+    height: 120,
+  },
 
-    homeButton: {
-        position: 'absolute',
-        top: 10,
-        left: 10,
-        zIndex: 1,
-        alignSelf: "flex-start",
-        backgroundColor: "#fff",
-        padding: 10,
-        borderRadius: 50,
-        marginBottom: 20,
-        elevation: 5,
-      },
-      nextButton: {
-        backgroundColor: "#A6B89F",
-        paddingTop: 5,
-        paddingBottom: 5,
-        paddingLeft: 15,
-        paddingRight: 15,
-        borderRadius: 20,
-        position: 'absolute',
-        bottom: 20,
-        right: 10
-      },
+  buttons: {
+    position: "absolute",
+    bottom: 10,
+    right: 5,
+    flex: 1,
+    flexDirection: 'row'
+  },
 
-      searchContainer: {
-        marginVertical: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#D8DBBD",
-        borderRadius: 25,
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-      },
-      searchInput: {
-        flex: 1,
-        fontSize: 16,
-        color: "#333",
-        padding: 10,
-      },
+  homeButton: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    zIndex: 1,
+    alignSelf: "flex-start",
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 50,
+    marginBottom: 20,
+    elevation: 5,
+  },
+  nextButton: {
+    backgroundColor: "#A6B89F",
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 20,
+    position: 'absolute',
+    bottom: 20,
+    right: 10
+  },
 
-      recommendedCard: {
+  searchContainer: {
+    marginVertical: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#D8DBBD",
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: "#333",
+    padding: 10,
+  },
+
+  recommendedCard: {
     backgroundColor: "#2A3663",
     borderRadius: 12,
     overflow: "hidden",

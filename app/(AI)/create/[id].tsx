@@ -106,9 +106,9 @@ export default function Page() {
           const kontekst = `
             ${JSON.stringify(data)}
             Koristeći ove podatke, kreiraj mi travel plan od ${trip.start_date} do ${trip.end_date} 
-            za grad Beograd, Niš ili Kragujevac na osnovu ovih interesovanja: ${preferences.preferences}.
+            za grad Beograd ili Kragujevac ili Niš,na osnovu ovih interesovanja: ${preferences.preferences}.
             Plan treba da bude u JSON formatu i neka se ispisuje u formatu:
-            {city: 'Naziv Grada' activities:{ days:{Dan + (broj koji je dan po redu bez datuma): ['odgovarajuci id destinacije']}}}
+            {city: 'Naziv Grada' activities:{days:{Dan + (broj koji je dan po redu bez datuma): ['odgovarajuci id destinacije']}}}
           `;
     
           try {
@@ -118,7 +118,6 @@ export default function Page() {
             console.log("Kreiranje putovanja...");
     
             const parsedResult = JSON.parse(result.response.text());
-            fetchCity(parsedResult[0]?.city)
             updateTrip(parsedResult);
           } catch (error) {
             console.error("Error parsing AI response:", error);
@@ -130,6 +129,7 @@ export default function Page() {
       }, [data, trip, preferences]);
 
       const fetchCity = async (cityName) => {
+        console.log(cityName);
         const { data, error } = await supabase.from("cities").select("cityImage").eq('name',cityName);
         if (error) {
           console.error("Error fetching city Image:", error);
@@ -148,16 +148,21 @@ export default function Page() {
       // Ažuriranje putovanja
       const updateTrip = async (result) => {
             try {
+              const city = result?.city || result?.[0]?.city;
+                const activities = result?.activities || result?.[0]?.activities;
 
-                const cityData = await fetchCity(result[0]?.city);
+
+                const cityData = await fetchCity(city);
                 const cityImage = cityData ? cityData.cityImage : null
+
+            
 
 
                 const { data, error } = await supabase
                   .from("trips")
                   .update({
-                    activities: result[0]?.activities,
-                    title: result[0]?.city,
+                    activities: activities,
+                    title: city,
                     photo_url: cityImage,
                   })
                   .eq("id", id);
@@ -168,7 +173,7 @@ export default function Page() {
           
                 setProgress(1.0);
                 console.log("Putovanje ažurirano, preusmeravanje na početnu...");
-                router.replace("/home");
+                router.replace(`(trip)/chooseHotel?id=${id}&text=${city}`);
               } catch (error) {
                 console.error("Greška pri update:", error.message);
               }

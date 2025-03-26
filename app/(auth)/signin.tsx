@@ -32,7 +32,7 @@ export default function SignIn() {
     });
 
     if (session) {
-      router.push("/interests");
+      router.push("/home");
     }
 
     if (error) Alert.alert(error.message);

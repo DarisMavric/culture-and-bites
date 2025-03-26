@@ -65,22 +65,6 @@ export default function Page() {
       }
     };
 
-    const fetchUser = async () => {
-      const { data, error } = await supabase
-        .from("users")
-        .select("preferences")
-        .eq("id", session?.user.id);
-
-      if (error) {
-        console.error("Error fetching user:");
-      } else {
-        if (data.length > 0) {
-          router.replace("/home");
-        }
-      }
-    };
-
-    fetchUser();
     fetchLocations();
   }, []);
 
@@ -133,7 +117,7 @@ export default function Page() {
         </View>
 
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {foodTypes.map((item, index) => {
+          {foodTypes?.map((item, index) => {
             return (
               <TouchableOpacity
                 style={[
@@ -153,7 +137,7 @@ export default function Page() {
         </View>
 
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {cultureTypes.map((item, index) => {
+          {cultureTypes?.map((item, index) => {
             return (
               <TouchableOpacity
                 style={[
@@ -173,7 +157,7 @@ export default function Page() {
         </View>
 
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {activityTypes.map((item, index) => {
+          {activityTypes?.map((item, index) => {
             return (
               <TouchableOpacity
                 style={[

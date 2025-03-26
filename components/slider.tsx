@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,48 +6,44 @@ import {
   Image,
   StyleSheet,
   Dimensions,
+  Alert,
 } from "react-native";
 import Carousel from "pinar";
 import { useRouter } from "expo-router";
+import { supabase } from "../lib/supabase";
 
 const { width, height } = Dimensions.get("window");
 
 const Slider = () => {
-  const router = useRouter();
-  const cards = [
-    {
-      image:
-        "https://s3-alpha-sig.figma.com/img/4921/b274/f484dbd21c977ec1f30bb12b6dbf30bf?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=CmEl-pdbZor0K3C-Bd4ju9FxLIgJPMTaM4fhFs1~5r-PZvcCa12kX9qTmTLv~MqRHeiAbGgtMNpn9L-RAnfF976BZKPFjjWxVYsv1Jx0zAW6yNiT7xKsThECdihsNf4Dz7vrkGpc~wlMBPx0Lx6J-TeI5BDKPzNBc4Zmq0hpcpttZ73KibGkuwDAu2kLcT6pN64y5Um0ceX4FiKu7FjkMiqkET1hCd5xQDHzpywINIaFcxZc1VwiXGgGnJPZGBDMIGMbH9bN7RS2CfXLzSIW~5ywb3uavjerbCpAS0n1Hwqhhaw4OHN2SPXWYF7f7MddziGFCx~mI0P3OwNoTfYBAw__",
-      title: "Paris",
-      tags: ["Food", "Culture & Museums", "Family Trip"],
-      description:
-        "Paris, Francuska – svetski centar umetnosti, mode i kulture.",
-    },
-    {
-      image:
-        "https://www.barcelo.com/guia-turismo/wp-content/uploads/que-visitar-en-barcelona-1.jpg",
-      title: "Barcelona",
-      tags: ["Sport", "Sea", "Family Trip"],
-      description: "Barcelona, Span - neka deskrpicijaaaa mnogo lepo",
-    },
-    {
-      image:
-        "https://chasingthedonkey.b-cdn.net/wp-content/uploads/2018/02/BELGRADE2C20SERBIA_shutterstock_621933932.jpg",
-      title: "Belgrade",
-      tags: ["History", "Food", "Sport"],
-      description:
-        "Belgrade, Serbia - isto neka deskripcija za test, isto mnogo lpeooo",
-    },
-  ];
+
+  const [cities,setCities] = useState(null);
+
+  useEffect(() => {
+      const fetchCities = async () => {
+        const { data, error } = await supabase.from("cities").select("*");
+  
+        if (error) {
+          console.error("Error fetching cities:", error);
+          Alert.alert("Error", "Failed to load cities.");
+        } else {
+          setCities(data);
+        }
+      };
+  
+      fetchCities();
+    }, []);
+
+
+  const router = useRouter(); 
 
   return (
     <View>
       <Carousel showsControls={false} height={510}>
-        {cards.map((card, index) => (
+        {cities?.map((city, index) => (
           <View key={index} style={styles.recommendedCard}>
             <Image
               source={{
-                uri: card.image,
+                uri: city.cityImage,
               }}
               style={[
                 styles.recommendedImage,
@@ -56,20 +52,15 @@ const Slider = () => {
             />
             <View style={styles.recommendedContent}>
               <View style={styles.tagsRow}>
-                <Text style={styles.cityTitle}>{card.title}</Text>
-                {card.tags.map((tag, idx) => (
-                  <Text key={idx} style={styles.tag}>
-                    {tag}
-                  </Text>
-                ))}
+                <Text style={styles.cityTitle}>{city?.name}</Text>
               </View>
               <View style={styles.descriptionView}>
-                <Text style={styles.description}>{card.description}</Text>
+                <Text style={styles.description}>{city?.description}</Text>
                 <TouchableOpacity
                   style={styles.exploreButton}
                   onPress={() => router.replace("/(AI)/createTrip")}
                 >
-                  <Text style={styles.exploreButtonText}>EXPLORE</Text>
+                  <Text style={styles.exploreButtonText}>ISTRAZI</Text>
                 </TouchableOpacity>
               </View>
             </View>
