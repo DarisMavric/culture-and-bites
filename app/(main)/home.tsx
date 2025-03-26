@@ -93,25 +93,68 @@ export default function Page() {
           </View>
           <View style={styles.foodContainer}>
             <View>
-              <Text style={styles.sectionTitle}>🥐 HRANA</Text>
+              <Text style={styles.sectionTitle}>🍽 Hrana i Restorani</Text>
             </View>
-            {destinations?.map((item, index) => {
-              if (
-                item?.category !== "FOOD" &&
-                !preferences?.includes(item.type)
-              )
-                return null;
+            {destinations.map((item, index) => {
+              const isMatchingCategory = item.category === "Hrana i Restorani";
+              const shouldShow = preferences.includes(item.type)
 
-              return (
-                <View key={index}>
-                  <Destinations item={item} />
-                </View>
-              );
+              if (isMatchingCategory && shouldShow) {
+                return (
+                  <View key={index}>
+                    <Destinations item={item} />
+                  </View>
+                );
+              }
+
+              return null;
+            })}
+          </View>
+
+          <View>
+            <View>
+              <Text style={styles.sectionTitle}>🏛 Kultura i znamenitosti</Text>
+            </View>
+            {destinations.map((item, index) => {
+
+              const isMatchingCategory = item.category === "Kultura i znamenitosti"
+              const shouldShow = preferences.includes(item.type)
+
+              if (isMatchingCategory && shouldShow) {
+                return (
+                  <View key={index}>
+                    <Destinations item={item} />
+                  </View>
+                );
+              }
+
+              return null;
+            })}
+          </View>
+
+          <View>
+            <View>
+              <Text style={styles.sectionTitle}>🎭 Aktivnosti i doživljaji</Text>
+            </View>
+            {destinations.map((item, index) => {
+
+              const isMatchingCategory = item.category === "Aktivnosti i doživljaji"
+              const shouldShow = preferences.includes(item.type)
+
+              if (isMatchingCategory && shouldShow) {
+                return (
+                  <View key={index}>
+                    <Destinations item={item} />
+                  </View>
+                );
+              }
+
+              return null;
             })}
           </View>
         </View>
-      </ScrollView>
-    </SafeAreaProvider>
+      </ScrollView >
+    </SafeAreaProvider >
   );
 }
 

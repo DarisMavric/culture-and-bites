@@ -30,7 +30,7 @@ export default function Page() {
   const { session } = useAuth();
 
   useEffect(() => {
-    if (id) {
+    if (id && text) {
       const fetchTrip = async () => {
         const { data, error } = await supabase
           .from("trips")
@@ -57,7 +57,7 @@ export default function Page() {
       };
 
       const fetchHotels = async () => {
-        const { data, error } = await supabase.from("hotels").select("*").eq('city', "Beograd");
+        const { data, error } = await supabase.from("hotels").select("*").eq('city', text);
 
         if (error) {
           console.error("Error fetching locations:", error);
@@ -71,7 +71,7 @@ export default function Page() {
       fetchLocations();
       fetchTrip();
     }
-  }, [id]);
+  }, [id,text]);
 
   const dodajHotel = async () => {
     if (id) {
