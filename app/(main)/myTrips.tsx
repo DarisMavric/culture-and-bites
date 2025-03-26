@@ -72,7 +72,8 @@ const myTrips = () => {
         <View style={{ marginBottom: 10 }} />
         <Button
           title="Kreiraj Novo Putovanje Pomocu Vestacke Inteligencije"
-          onPress={() => router.replace("(AI)/addDate")}
+          /* onPress={() => router.replace("(AI)/addDate")} */
+          onPress={() => router.replace("(AI)/mapa")}
           color={"#2A3663"}
         />
       </View>
