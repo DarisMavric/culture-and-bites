@@ -164,7 +164,7 @@ export default function myPlan() {
       </ImageBackground>
       <View
         style={{
-          flexDirection: "row",
+          flexDirection: "column",
           justifyContent: "space-between",
           alignItems: "center",
         }}
@@ -174,11 +174,18 @@ export default function myPlan() {
             .filter((car) => car.id === data?.rented_car)
             .map((car, index) => (
               <View key={index}>
-                <Text
-                  style={{ paddingLeft: 10, letterSpacing: 0.5, fontSize: 14 }}
-                >
-                  {car.name}
-                </Text>
+                <View style={styles.locationDiv} key={index}>
+                  <Image
+                    source={{
+                      uri: car.image,
+                    }}
+                    style={styles.locationIMG}
+                  />
+                  <View style={styles.locationRight}>
+                    <Text style={styles.userNameStyle}>{car.name}</Text>
+                    <Text style={styles.adressStyle}>{car.type}</Text>
+                  </View>
+                </View>
               </View>
             ))}
 
@@ -187,15 +194,18 @@ export default function myPlan() {
             .map((hotel, index) => {
               return (
                 <View key={index}>
-                  <Text
-                    style={{
-                      paddingLeft: 10,
-                      letterSpacing: 0.5,
-                      fontSize: 14,
+                  <View style={styles.locationDiv} key={index}>
+                  <Image
+                    source={{
+                      uri: hotel.image,
                     }}
-                  >
-                    {hotel?.name}
-                  </Text>
+                    style={styles.locationIMG}
+                  />
+                  <View style={styles.locationRight}>
+                    <Text style={styles.userNameStyle}>{hotel.name}</Text>
+                    <Text style={styles.adressStyle}>{hotel.room}</Text>
+                  </View>
+                </View>
                 </View>
               );
             })}
@@ -468,5 +478,50 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(238,179,73)",
     padding: 5,
     borderRadius: 20,
+  },
+
+
+  locationIMG: {
+    height: "100%",
+    width: "25%",
+    overflow: "hidden",
+    borderRadius: 10,
+    marginRight: 10,
+  },
+
+  locationDiv: {
+    flexDirection: "row",
+    backgroundColor: "#D8DBBD",
+    borderRadius: 10,
+    marginBottom: 12,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    elevation: 1,
+    alignItems: "center",
+    marginTop: 10,
+  },
+
+  locationRight: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginHorizontal: 0,
+    width: "70%",
+  },
+
+  userNameStyle: {
+    color: "#2A3663F5",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+
+
+  adressStyle: {
+    fontSize: 14,
+    color: "#B59F78",
+    marginTop: 5,
+    flexWrap: "wrap",
+    width: "90%",
   },
 });
