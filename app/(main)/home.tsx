@@ -91,7 +91,12 @@ export default function Page() {
           </View>
 
           <Text style={styles.sectionTitle}>Preporučeno</Text>
-          <View style={{height: '22.5%'}}>
+          <View
+            style={{
+              height: Dimensions.get("window").height * 0.22,
+              marginBottom: Dimensions.get("window").height * 0.3,
+            }}
+          >
             <Slider />
           </View>
 
@@ -99,20 +104,23 @@ export default function Page() {
             <View>
               <Text style={styles.sectionTitle}>🍽 Hrana i Restorani</Text>
             </View>
-            {destinations.map((item, index) => {
-              const isMatchingCategory = item.category === "Hrana i Restorani";
-              const shouldShow = preferences.includes(item.type);
+            <View>
+              {destinations.map((item, index) => {
+                const isMatchingCategory =
+                  item.category === "Hrana i Restorani";
+                const shouldShow = preferences.includes(item.type);
 
-              if (isMatchingCategory && shouldShow) {
-                return (
-                  <View key={index}>
-                    <Destinations item={item} />
-                  </View>
-                );
-              }
+                if (isMatchingCategory && shouldShow) {
+                  return (
+                    <View key={index}>
+                      <Destinations item={item} />
+                    </View>
+                  );
+                }
 
-              return null;
-            })}
+                return null;
+              })}
+            </View>
           </View>
 
           <View>
@@ -166,6 +174,7 @@ export default function Page() {
 
 const styles = StyleSheet.create({
   container: {
+    justifyContent: "space-between",
     padding: 10,
     paddingTop: Platform.OS === "ios" ? 45 : 10,
   },
