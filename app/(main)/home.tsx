@@ -91,7 +91,7 @@ export default function Page() {
           </View>
 
           <Text style={styles.sectionTitle}>Preporučeno</Text>
-          <View>
+          <View style={{height: '22.5%'}}>
             <Slider />
           </View>
 

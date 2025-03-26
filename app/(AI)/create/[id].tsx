@@ -108,7 +108,7 @@ export default function Page() {
             Koristeći ove podatke, kreiraj mi travel plan od ${trip.start_date} do ${trip.end_date} 
             za grad Beograd ili Kragujevac ili Niš,na osnovu ovih interesovanja: ${preferences.preferences}.
             Plan treba da bude u JSON formatu i neka se ispisuje u formatu:
-            {city: 'Naziv Grada' activities:{days:{Dan + (broj koji je dan po redu bez datuma): ['odgovarajuci id destinacije']}}}
+            {city: 'Naziv Grada' activities:{days:{Dan + (broj koji je dan po redu bez datuma): ['odgovarajuci id destinacije']}}},obavezno u ovom formatu
           `;
     
           try {
