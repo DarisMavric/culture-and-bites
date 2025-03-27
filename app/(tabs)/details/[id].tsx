@@ -129,6 +129,7 @@ export default function FoodDetails() {
       <View>
         <Image source={{ uri: details[0]?.image }} style={styles.foodImage} />
       </View>
+      <Text style={{margin: 5}}>*Slike su vlasništvo originalnih autora i koriste se samo za demonstraciju*</Text>
       <View style={styles.informationDiv}>
         <View style={styles.place}>
           <View style={{ flexDirection: "row" }}>

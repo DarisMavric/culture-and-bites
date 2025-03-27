@@ -10,7 +10,8 @@ const NIS = { latitude: 43.3209, longitude: 21.8958 };
 const restaurants = [
     { name: "Koznik - Tvrdjava, Castle", latitude: 43.47842331109506, longitude: 21.012897317637854 },
     { name: "Nacionalni Park Kopaonik", latitude: 43.27634298955466, longitude: 20.79904813842572 },
-    { name: "Restoran C", latitude: 43.3, longitude: 21.5 }
+    { name: "Jastrebac", latitude: 43.403439935463346, longitude: 21.433281464314543 },
+    { name: "Sastavci", latitude: 43.70376210842525, longitude: 21.410701264976396 }
 ];
 
 const Mapa = () => {

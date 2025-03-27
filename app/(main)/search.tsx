@@ -73,7 +73,7 @@ const search = () => {
           </View>
           <View style={styles.searchContainer}>
             <TextInput
-              placeholder="Istraži Destinacija i Gradove..."
+              placeholder="Istraži Destinacije..."
               style={styles.searchInput}
               placeholderTextColor="#444"
               onChangeText={setSearch}
@@ -92,21 +92,6 @@ const search = () => {
             />
 
             <View>
-              <View>
-                <Text style={styles.sectionTitle}>Gradovi</Text>
-              </View>
-              {locations.map((item, index) => {
-
-
-                if (item.name.startsWith(search) || selectedCategories.includes(item.type))
-
-
-                  return (
-                    <View key={index}>
-                      <Cities item={item} />
-                    </View>
-                  );
-              })}
             </View>
             <View>
               <Text style={styles.sectionTitle}>🍽 Hrana i Restorani</Text>
