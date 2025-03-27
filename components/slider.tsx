@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
   carousel: {
     height: "100%",
     width: "100%",
+    alignSelf: "center",
   },
 
   recommendedCard: {
@@ -84,6 +85,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     elevation: 2,
     marginRight: 5,
+    width: "95%",
+    alignSelf: "center",
   },
   recommendedImage: {
     width: "100%",

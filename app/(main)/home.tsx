@@ -26,13 +26,6 @@ export default function Page() {
   const [destinations, setDestinations] = useState([]);
   const [preferences, setPreferences] = useState([]);
 
-  async function signOut() {
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
-      router.replace("/signin");
-    }
-  }
-
   useEffect(() => {
     const fetchLocations = async () => {
       const { data, error } = await supabase.from("destinations").select("*");
@@ -77,7 +70,7 @@ export default function Page() {
                 {session?.user.user_metadata.name}
               </Text>
             </Text>
-            <TouchableOpacity onPress={signOut}>
+            <TouchableOpacity onPress={() => router.push("/(main)/account")}>
               <FontAwesome name="user" size={30} color="black" />
             </TouchableOpacity>
           </View>
@@ -89,82 +82,85 @@ export default function Page() {
               placeholderTextColor="#444"
             />
           </View>
-
-          <Text style={styles.sectionTitle}>Preporučeno</Text>
-          <View
-            style={{
-              height: Dimensions.get("window").height * 0.22,
-              marginBottom: Dimensions.get("window").height * 0.3,
-            }}
-          >
-            <Slider />
-          </View>
-
-          <View style={styles.foodContainer}>
-            <View>
-              <Text style={styles.sectionTitle}>🍽 Hrana i Restorani</Text>
-            </View>
-            <View>
-              {destinations.map((item, index) => {
-                const isMatchingCategory =
-                  item.category === "Hrana i Restorani";
-                const shouldShow = preferences.includes(item.type);
-
-                if (isMatchingCategory && shouldShow) {
-                  return (
-                    <View key={index}>
-                      <Destinations item={item} />
-                    </View>
-                  );
-                }
-
-                return null;
-              })}
-            </View>
-          </View>
-
           <View>
-            <View>
-              <Text style={styles.sectionTitle}>🏛 Kultura i znamenitosti</Text>
+            <View
+              style={{
+                height: Dimensions.get("window").height * 0.55,
+              }}
+            >
+              <Text style={styles.sectionTitle}>Preporučeno</Text>
+              <Slider />
             </View>
-            {destinations.map((item, index) => {
-              const isMatchingCategory =
-                item.category === "Kultura i znamenitosti";
-              const shouldShow = preferences.includes(item.type);
-
-              if (isMatchingCategory && shouldShow) {
-                return (
-                  <View key={index}>
-                    <Destinations item={item} />
-                  </View>
-                );
-              }
-
-              return null;
-            })}
-          </View>
-
-          <View>
             <View>
-              <Text style={styles.sectionTitle}>
-                🎭 Aktivnosti i doživljaji
-              </Text>
+              <View style={styles.foodContainer}>
+                <View>
+                  <Text style={styles.sectionTitle}>🍽 Hrana i Restorani</Text>
+                </View>
+                <View>
+                  {destinations.map((item, index) => {
+                    const isMatchingCategory =
+                      item.category === "Hrana i Restorani";
+                    const shouldShow = preferences.includes(item.type);
+
+                    if (isMatchingCategory && shouldShow) {
+                      return (
+                        <View key={index}>
+                          <Destinations item={item} />
+                        </View>
+                      );
+                    }
+
+                    return null;
+                  })}
+                </View>
+              </View>
+
+              <View>
+                <View>
+                  <Text style={styles.sectionTitle}>
+                    🏛 Kultura i znamenitosti
+                  </Text>
+                </View>
+                {destinations.map((item, index) => {
+                  const isMatchingCategory =
+                    item.category === "Kultura i znamenitosti";
+                  const shouldShow = preferences.includes(item.type);
+
+                  if (isMatchingCategory && shouldShow) {
+                    return (
+                      <View key={index}>
+                        <Destinations item={item} />
+                      </View>
+                    );
+                  }
+
+                  return null;
+                })}
+              </View>
+
+              <View>
+                <View>
+                  <Text style={styles.sectionTitle}>
+                    🎭 Aktivnosti i doživljaji
+                  </Text>
+                </View>
+                {destinations.map((item, index) => {
+                  const isMatchingCategory =
+                    item.category === "Aktivnosti i doživljaji";
+                  const shouldShow = preferences.includes(item.type);
+
+                  if (isMatchingCategory && shouldShow) {
+                    return (
+                      <View key={index}>
+                        <Destinations item={item} />
+                      </View>
+                    );
+                  }
+
+                  return null;
+                })}
+              </View>
             </View>
-            {destinations.map((item, index) => {
-              const isMatchingCategory =
-                item.category === "Aktivnosti i doživljaji";
-              const shouldShow = preferences.includes(item.type);
-
-              if (isMatchingCategory && shouldShow) {
-                return (
-                  <View key={index}>
-                    <Destinations item={item} />
-                  </View>
-                );
-              }
-
-              return null;
-            })}
           </View>
         </View>
       </ScrollView>

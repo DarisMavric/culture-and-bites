@@ -12,6 +12,7 @@ import { supabase } from "../../lib/supabase";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
 import { StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Account = () => {
   const [account, setAccount] = useState(null);
@@ -37,7 +38,13 @@ const Account = () => {
 
     getAccount();
   }, [session?.user?.id]);
-
+  async function signOut() {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+      await AsyncStorage.removeItem("userSession");
+      router.replace("/signin");
+    }
+  }
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString("sr-RS", {
@@ -103,7 +110,7 @@ const Account = () => {
           </View>
         ) : null}
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => signOut()}>
           <View style={styles.button1}>
             <Text style={styles.button1Color}>Odjavi se</Text>
           </View>

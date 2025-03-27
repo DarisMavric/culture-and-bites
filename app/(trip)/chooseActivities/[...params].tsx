@@ -71,91 +71,99 @@ export default function Page() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        style={{ backgroundColor: "#FAF6E3" }}
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}
-      >
-        <TouchableOpacity
-          style={styles.homeButton}
-          onPress={() => router.replace("/home")}
+    <SafeAreaView style={styles.safeContainer}>
+      <View style={styles.container}>
+        <ScrollView
+          style={styles.scrollContainer}
+          contentContainerStyle={styles.scrollContent}
         >
-          <Ionicons name="home" color="#B59F78" size={24} />
-        </TouchableOpacity>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{
-              uri:
-                destinations.length > 0
-                  ? destinations[0].image
-                  : "https://via.placeholder.com/300",
-            }}
-            style={styles.image}
-            resizeMode="cover"
-          />
-          <View style={styles.imageBox}>
-            <Text style={styles.imageText}>Izaberite Aktivnost</Text>
-          </View>
-        </View>
-        <View style={styles.searchContainer}>
-          <TextInput
-            placeholder="Istraži Destinacije..."
-            style={styles.searchInput}
-            placeholderTextColor="#444"
-          />
-        </View>
-        {destinations.map((item, index) => (
-          <View style={styles.recommendedCard} key={index}>
+          <TouchableOpacity
+            style={styles.homeButton}
+            onPress={() => router.replace("/home")}
+          >
+            <Ionicons name="home" color="#B59F78" size={24} />
+          </TouchableOpacity>
+          <View style={styles.imageContainer}>
             <Image
-              source={{ uri: item?.image }}
-              style={styles.recommendedImage}
+              source={{
+                uri:
+                  destinations.length > 0
+                    ? destinations[0].image
+                    : "https://via.placeholder.com/300",
+              }}
+              style={styles.image}
+              resizeMode="cover"
             />
-            <View style={styles.recommendedContent}>
-              <View style={styles.tagsRow}>
-                <Text
-                  style={styles.cityTitle}
-                >{`${item?.name}, ${item?.city}`}</Text>
-              </View>
-              <View style={styles.descriptionView}>
-                <Text style={styles.description}>
-                  {item?.description
-                    ? item.description.substring(0, 50) + "..."
-                    : ""}
-                </Text>
-                <TouchableOpacity
-                  style={
-                    selected === item?.id
-                      ? styles.exploreSelectedButton
-                      : styles.exploreButton
-                  }
-                  onPress={() => setSelected(item?.id)}
-                >
-                  <Text style={styles.exploreButtonText}>ODABRERI</Text>
-                </TouchableOpacity>
-              </View>
+            <View style={styles.imageBox}>
+              <Text style={styles.imageText}>Izaberite Aktivnost</Text>
             </View>
           </View>
-        ))}
+          <View style={styles.searchContainer}>
+            <TextInput
+              placeholder="Istraži Destinacije..."
+              style={styles.searchInput}
+              placeholderTextColor="#444"
+            />
+          </View>
+          <View style={{ position: "relative" }}>
+            {destinations.map((item, index) => (
+              <View style={styles.recommendedCard} key={index}>
+                <Image
+                  source={{ uri: item?.image }}
+                  style={styles.recommendedImage}
+                />
+                <View style={styles.recommendedContent}>
+                  <View style={styles.tagsRow}>
+                    <Text style={styles.cityTitle}>
+                      {`${item?.name}, ${item?.city}`}
+                    </Text>
+                  </View>
+                  <View style={styles.descriptionView}>
+                    <Text style={styles.description}>
+                      {item?.description
+                        ? item.description.substring(0, 50) + "..."
+                        : ""}
+                    </Text>
+                    <TouchableOpacity
+                      style={
+                        selected === item?.id
+                          ? styles.exploreSelectedButton
+                          : styles.exploreButton
+                      }
+                      onPress={() => setSelected(item?.id)}
+                    >
+                      <Text style={styles.exploreButtonText}>ODABRERI</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+
+        {/* Fiksirano dugme "DALJE" koje uvek prati dno ekrana */}
         <TouchableOpacity style={styles.nextButton} onPress={dodajGrad}>
-          <Text
-            style={{
-              fontSize: 25,
-              color: "#fff",
-              fontFamily: "LeagueSpartan_700Bold",
-            }}
-          >
-            DALJE
-          </Text>
+          <Text style={styles.nextButtonText}>DALJE</Text>
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeContainer: {
     flex: 1,
     backgroundColor: "#FAF6E3",
+  },
+  container: {
+    flex: 1,
+    position: "relative", // Ovo osigurava da apsolutno pozicionirani elementi budu unutar ovog kontejnera
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100, // Dodatni prostor da sadržaj ne bude prekriven dugmetom
   },
   imageContainer: {
     backgroundColor: "#2A3663",
@@ -172,16 +180,15 @@ const styles = StyleSheet.create({
     fontFamily: "LeagueSpartan_700Bold",
   },
   image: {
-    resizeMode: "cover",
-    opacity: 0.3,
     width: "100%",
     height: 160,
+    opacity: 0.3,
   },
   homeButton: {
     position: "absolute",
     top: 10,
     left: 10,
-    zIndex: 1,
+    zIndex: 10,
     backgroundColor: "#fff",
     padding: 10,
     borderRadius: 50,
@@ -267,11 +274,21 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     backgroundColor: "#A6B89F",
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderRadius: 20,
+    paddingVertical: 15,
+    alignItems: "center",
+    justifyContent: "center",
     position: "absolute",
-    bottom: 20,
-    right: 10,
+    width: "30%",
+    margin: 20,
+    borderRadius: 10,
+    bottom: 0,
+    left: "60%",
+    right: 0,
+    zIndex: 20, // Viši zIndex da bude iznad svega ostalog
+  },
+  nextButtonText: {
+    fontSize: 25,
+    color: "#fff",
+    fontFamily: "LeagueSpartan_700Bold",
   },
 });
