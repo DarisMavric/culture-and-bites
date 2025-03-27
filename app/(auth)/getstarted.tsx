@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   Text,
   View,
+  Image,
 } from "react-native";
 import React from "react";
 import { useRouter } from "expo-router";
@@ -12,11 +13,9 @@ export default function SignIn() {
   const router = useRouter();
 
   return (
-    <ImageBackground
-      source={require("./43b0b0ef53ba4170bb9b268f16d3b6b3.png")}
-      style={styles.background}
-    >
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <Image source={require("../../assets/logo.png")} />
+      <View style={{ width: "95%", alignSelf: "center" }}>
         <TouchableOpacity
           style={styles.button}
           onPress={() => router.push("/(auth)/signup")}
@@ -33,8 +32,32 @@ export default function SignIn() {
           </Text>
         </Text>
       </View>
-    </ImageBackground>
+    </View>
   );
+  // return (
+  //   <ImageBackground
+  //     source={require("./43b0b0ef53ba4170bb9b268f16d3b6b3.png")}
+  //     style={styles.background}
+  //   >
+  //     <View style={styles.container}>
+  //       <TouchableOpacity
+  //         style={styles.button}
+  //         onPress={() => router.push("/(auth)/signup")}
+  //       >
+  //         <Text style={styles.buttonText}>Počni</Text>
+  //       </TouchableOpacity>
+  //       <Text style={styles.link}>
+  //         Već imate kreiran nalog?{" "}
+  //         <Text
+  //           style={styles.loginButton}
+  //           onPress={() => router.push("/(auth)/signin")}
+  //         >
+  //           Prijavi se
+  //         </Text>
+  //       </Text>
+  //     </View>
+  //   </ImageBackground>
+  // );
 }
 
 const styles = StyleSheet.create({
@@ -46,6 +69,8 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: "center",
+    justifyContent: "space-around",
+    height: "100%",
     width: "100%",
   },
   button: {
@@ -53,11 +78,14 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     width: "80%",
+    alignSelf: "center",
+
     boxShadow: "0px 0px 10px #333333",
   },
   buttonText: {
     color: "rgb(181,159,120)",
     fontWeight: "bold",
+
     fontSize: 20,
     textAlign: "center",
   },
@@ -65,6 +93,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: "rgb(181,159,120)",
     fontWeight: "bold",
+    alignSelf: "center",
     fontSize: 14,
   },
   loginButton: {

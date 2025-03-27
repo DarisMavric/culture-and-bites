@@ -13,6 +13,7 @@ import "@fontsource/league-spartan";
 import { supabase } from "../../lib/supabase";
 import React, { useState } from "react";
 import { Link, useNavigation, useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -32,6 +33,7 @@ export default function SignIn() {
     });
 
     if (session) {
+      await AsyncStorage.setItem("userSession", JSON.stringify(session));
       router.push("/home");
     }
 
